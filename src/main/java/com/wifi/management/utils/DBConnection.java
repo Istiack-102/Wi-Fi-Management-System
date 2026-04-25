@@ -1,4 +1,4 @@
-package com.wifi.management.db_connection;
+package com.wifi.management.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
