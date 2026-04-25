@@ -14,6 +14,7 @@ public class PlanDAO {
             pstmt.setDouble(2, price);
             pstmt.setString(3, speed);
             pstmt.executeUpdate();
+            System.out.println("Plan added successfully!");
 
         } catch (Exception e) {
             e.printStackTrace();

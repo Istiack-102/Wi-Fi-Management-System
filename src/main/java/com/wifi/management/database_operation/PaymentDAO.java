@@ -11,7 +11,6 @@ public class PaymentDAO {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            // Age parameterIndex khali chilo, ekhon index (1, 2) bosiye deya hoyeche
             pstmt.setInt(1, subId);
             pstmt.setString(2, date);
 
