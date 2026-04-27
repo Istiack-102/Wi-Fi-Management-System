@@ -1,6 +1,6 @@
 package com.wifi.management.database_operation;
 
-import com.wifi.management.db_connection.DBConnection;
+import com.wifi.management.utils.DBConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

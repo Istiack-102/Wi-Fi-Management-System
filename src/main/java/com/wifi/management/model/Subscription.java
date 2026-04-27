@@ -1,15 +1,23 @@
-package com.wifi.management.model;
+package wifi.management.model;
+
+import java.sql.Date;
 
 public class Subscription {
     private int subscriptionId;
-    private String startDate;
-    private String endDate;
-    private String status;
+    private Date startDate;
+    private Date endDate;
+    private int userId;
+    private int planId;
 
-    public Subscription(int subscriptionId, String startDate, String endDate, String status) {
+    public Subscription(int subscriptionId, Date startDate, Date endDate, int userId, int planId) {
         this.subscriptionId = subscriptionId;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.status = status;
+        this.userId = userId;
+        this.planId = planId;
+    }
+
+    public int getSubscriptionId() {
+        return subscriptionId;
     }
 }

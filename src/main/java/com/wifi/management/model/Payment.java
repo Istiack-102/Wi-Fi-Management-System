@@ -11,7 +11,6 @@ public class Payment {
         this.subscriptionId = subscriptionId;
     }
 
-    // Getters
     public int getPaymentId() { return paymentId; }
     public String getPaymentDate() { return paymentDate; }
 }

@@ -12,7 +12,10 @@ public class Plan {
         this.dataLimit = dataLimit;
         this.price = price;
     }
-    // Getters
+
+    public double getdataLimited(){
+        return dataLimit;
+    }
     public int getPlanId() { return planId; }
     public double getPrice() { return price; }
 }

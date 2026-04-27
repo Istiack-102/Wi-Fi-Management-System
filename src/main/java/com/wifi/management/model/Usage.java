@@ -13,7 +13,6 @@ public class Usage {
         this.userId = userId;
     }
 
-    // Getters
     public int getUsageId() { return usageId; }
     public double getDataAmount() { return dataAmount; }
     public String getTimeUsed() { return timeUsed; }

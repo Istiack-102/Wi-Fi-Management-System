@@ -10,7 +10,7 @@ public class Admin {
         this.password = password;
         this.email = email;
     }
-    // Getters
+
     public int getAdminId() { return adminId; }
     public String getPassword() { return password; }
     public String getEmail() { return email; }
