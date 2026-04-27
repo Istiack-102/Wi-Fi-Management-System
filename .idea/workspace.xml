@@ -5,8 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3069395-68e2-4ae6-8f17-0bd17e6fe720" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/test/TestAdmin.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/PaymentDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/PaymentDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/PlanDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/PlanDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/UserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/UserDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/Admin.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/Payment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/Payment.java" afterDir="false" />
