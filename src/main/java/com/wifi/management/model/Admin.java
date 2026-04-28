@@ -13,6 +13,7 @@ public class Admin {
         this.email = email;
     }
 
+<<<<<<< HEAD
     // Getters
     public int getAdminId() {
         return adminId;
@@ -38,4 +39,9 @@ public class Admin {
     public void setEmail(String email) {
         this.email = email;
     }
+=======
+    public int getAdminId() { return adminId; }
+    public String getPassword() { return password; }
+    public String getEmail() { return email; }
+>>>>>>> 5c3be305d89b8f2e7752ae4797bda4cf3b7ea84a
 }

@@ -13,6 +13,7 @@ public class Payment {
         this.subscriptionId = subscriptionId;
     }
 
+<<<<<<< HEAD
     // Getters
     public int getPaymentId() {
         return paymentId;
@@ -38,4 +39,8 @@ public class Payment {
     public void setSubscriptionId(int subscriptionId) {
         this.subscriptionId = subscriptionId;
     }
+=======
+    public int getPaymentId() { return paymentId; }
+    public String getPaymentDate() { return paymentDate; }
+>>>>>>> 5c3be305d89b8f2e7752ae4797bda4cf3b7ea84a
 }
