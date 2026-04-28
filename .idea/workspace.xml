@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d3069395-68e2-4ae6-8f17-0bd17e6fe720" name="Changes" comment="">
+<<<<<<< HEAD
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/utils/Card_Checker.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/utils/hash_password.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/database_schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/database_schema.sql" afterDir="false" />
+=======
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/test/TestAdmin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/PaymentDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/PaymentDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/PlanDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/PlanDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/UserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/UserDAO.java" afterDir="false" />
+>>>>>>> 5c3be305d89b8f2e7752ae4797bda4cf3b7ea84a
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/Admin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/Admin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/Payment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/Payment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/Plan.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/Plan.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/Subscription.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/Subscription.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/Usage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/Usage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/User.java" afterDir="false" />
+<<<<<<< HEAD
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/service/PaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/service/PaymentService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/utils/BD_Number_check.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/utils/BD_Number_check.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/utils/Strong_password_check.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/utils/Strong_password_check.java" afterDir="false" />
+=======
+>>>>>>> 5c3be305d89b8f2e7752ae4797bda4cf3b7ea84a
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+<<<<<<< HEAD
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Istiack-102&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Istiack-102/Wi-Fi-Management-System.git&quot;,
+    &quot;accountId&quot;: &quot;9d9a45f1-c26c-4e01-a88e-434f12dd64ce&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="3CqxJ5osDdi9pnUAEFPTDBbJPfU" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.BD_Number_check.executor": "Run",
+    "Application.PaymentService.executor": "Run",
+    "Application.Strong_password_check.executor": "Run",
+    "Application.hash_password.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "Rebasing dev",
+    "last_opened_file_path": "C:/Users/ACER/OneDrive/Desktop/Wi-Fi-Management-System"
+=======
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.TestAdmin.executor": "Run",
+    "git-widget-placeholder": "dev"
+>>>>>>> 5c3be305d89b8f2e7752ae4797bda4cf3b7ea84a
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d3069395-68e2-4ae6-8f17-0bd17e6fe720" name="Changes" comment="" />
+      <created>1777126829624</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1777126829624</updated>
+    </task>
+    <servers />
+  </component>
+</project>
