@@ -1,41 +1,66 @@
 package com.wifi.management.model;
 
+import java.sql.Timestamp;
+
 public class Payment {
 
-    private int paymentId;
-    private String paymentDate;
-    private int subscriptionId;
+    private String transactionId;
+    private int userId;
+    private double amount;
+    private Timestamp paymentDate;
+    private String paymentMethod;
 
     // Constructor
-    public Payment(int paymentId, String paymentDate, int subscriptionId) {
-        this.paymentId = paymentId;
+    public Payment(String transactionId, int userId, double amount, Timestamp paymentDate, String paymentMethod) {
+        this.transactionId = transactionId;
+        this.userId = userId;
+        this.amount = amount;
         this.paymentDate = paymentDate;
-        this.subscriptionId = subscriptionId;
+        this.paymentMethod = paymentMethod;
     }
+
+    // Default Constructor
+    public Payment() {}
 
     // Getters
-    public int getPaymentId() {
-        return paymentId;
+    public String getTransactionId() {
+        return transactionId;
     }
 
-    public String getPaymentDate() {
+    public int getUserId() {
+        return userId;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public Timestamp getPaymentDate() {
         return paymentDate;
     }
 
-    public int getSubscriptionId() {
-        return subscriptionId;
+    public String getPaymentMethod() {
+        return paymentMethod;
     }
 
     // Setters
-    public void setPaymentId(int paymentId) {
-        this.paymentId = paymentId;
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
-    public void setPaymentDate(String paymentDate) {
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public void setPaymentDate(Timestamp paymentDate) {
         this.paymentDate = paymentDate;
     }
 
-    public void setSubscriptionId(int subscriptionId) {
-        this.subscriptionId = subscriptionId;
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 }

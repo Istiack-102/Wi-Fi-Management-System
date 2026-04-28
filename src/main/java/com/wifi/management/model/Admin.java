@@ -2,40 +2,53 @@ package com.wifi.management.model;
 
 public class Admin {
 
-    private int adminId;
-    private String password;
-    private String email;
+    private int userId;
+    private String username;
+    private String passwordHash; // Rename to match SQL 'password_hash'
+    private int roleId; // This will be '1' for Admins based on our SQL script
 
     // Constructor
-    public Admin(int adminId, String password, String email) {
-        this.adminId = adminId;
-        this.password = password;
-        this.email = email;
+    public Admin(int userId, String username, String passwordHash, int roleId) {
+        this.userId = userId;
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.roleId = roleId;
     }
+
+    // Default constructor (often needed for frameworks)
+    public Admin() {}
 
     // Getters
-    public int getAdminId() {
-        return adminId;
+    public int getUserId() {
+        return userId;
     }
 
-    public String getPassword() {
-        return password;
+    public String getUsername() {
+        return username;
     }
 
-    public String getEmail() {
-        return email;
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public int getRoleId() {
+        return roleId;
     }
 
     // Setters
-    public void setAdminId(int adminId) {
-        this.adminId = adminId;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
     }
 }

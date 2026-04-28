@@ -3,33 +3,36 @@ package com.wifi.management.model;
 public class Plan {
 
     private int planId;
-    private String duration;
-    private double dataLimit;
-    private double price;
+    private String planName;
+    private int speedLimitMbps;
+    private double monthlyPrice;
 
     // Constructor
-    public Plan(int planId, String duration, double dataLimit, double price) {
+    public Plan(int planId, String planName, int speedLimitMbps, double monthlyPrice) {
         this.planId = planId;
-        this.duration = duration;
-        this.dataLimit = dataLimit;
-        this.price = price;
+        this.planName = planName;
+        this.speedLimitMbps = speedLimitMbps;
+        this.monthlyPrice = monthlyPrice;
     }
+
+    // Default Constructor
+    public Plan() {}
 
     // Getters
     public int getPlanId() {
         return planId;
     }
 
-    public String getDuration() {
-        return duration;
+    public String getPlanName() {
+        return planName;
     }
 
-    public double getDataLimit() {
-        return dataLimit;
+    public int getSpeedLimitMbps() {
+        return speedLimitMbps;
     }
 
-    public double getPrice() {
-        return price;
+    public double getMonthlyPrice() {
+        return monthlyPrice;
     }
 
     // Setters
@@ -37,15 +40,15 @@ public class Plan {
         this.planId = planId;
     }
 
-    public void setDuration(String duration) {
-        this.duration = duration;
+    public void setPlanName(String planName) {
+        this.planName = planName;
     }
 
-    public void setDataLimit(double dataLimit) {
-        this.dataLimit = dataLimit;
+    public void setSpeedLimitMbps(int speedLimitMbps) {
+        this.speedLimitMbps = speedLimitMbps;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setMonthlyPrice(double monthlyPrice) {
+        this.monthlyPrice = monthlyPrice;
     }
 }
