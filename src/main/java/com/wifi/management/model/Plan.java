@@ -15,7 +15,6 @@ public class Plan {
         this.price = price;
     }
 
-<<<<<<< HEAD
     // Getters
     public int getPlanId() {
         return planId;
@@ -49,11 +48,4 @@ public class Plan {
     public void setPrice(double price) {
         this.price = price;
     }
-=======
-    public double getdataLimited(){
-        return dataLimit;
-    }
-    public int getPlanId() { return planId; }
-    public double getPrice() { return price; }
->>>>>>> 5c3be305d89b8f2e7752ae4797bda4cf3b7ea84a
 }

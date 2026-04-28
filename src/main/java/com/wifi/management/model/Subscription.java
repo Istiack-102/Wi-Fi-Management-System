@@ -9,22 +9,16 @@ public class Subscription {
     private Date endDate;
     private int userId;
     private int planId;
+    private String status; // added missing field
 
-<<<<<<< HEAD
     // Constructor
-    public Subscription(int subscriptionId, String startDate, String endDate, String status) {
-=======
-    public Subscription(int subscriptionId, Date startDate, Date endDate, int userId, int planId) {
->>>>>>> 5c3be305d89b8f2e7752ae4797bda4cf3b7ea84a
+    public Subscription(int subscriptionId, Date startDate, Date endDate, int userId, int planId, String status) {
         this.subscriptionId = subscriptionId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.userId = userId;
         this.planId = planId;
-    }
-
-    public int getSubscriptionId() {
-        return subscriptionId;
+        this.status = status;
     }
 
     // Getters
@@ -32,12 +26,20 @@ public class Subscription {
         return subscriptionId;
     }
 
-    public String getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public String getEndDate() {
+    public Date getEndDate() {
         return endDate;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public int getPlanId() {
+        return planId;
     }
 
     public String getStatus() {
@@ -49,12 +51,20 @@ public class Subscription {
         this.subscriptionId = subscriptionId;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public void setPlanId(int planId) {
+        this.planId = planId;
     }
 
     public void setStatus(String status) {

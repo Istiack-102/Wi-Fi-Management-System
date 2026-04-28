@@ -4,14 +4,17 @@ public class Usage {
     private int usageId;
     private double dataAmount;
     private String timeUsed;
+    private int userId; // added
 
     public Usage(int usageId, double dataAmount, String timeUsed, int userId) {
         this.usageId = usageId;
         this.dataAmount = dataAmount;
         this.timeUsed = timeUsed;
+        this.userId = userId;
     }
 
     public int getUsageId() { return usageId; }
     public double getDataAmount() { return dataAmount; }
     public String getTimeUsed() { return timeUsed; }
+    public int getUserId() { return userId; }
 }
