@@ -4,17 +4,19 @@ USE wifi_management_db;
 CREATE TABLE User (
                       userId INT PRIMARY KEY AUTO_INCREMENT,
                       name VARCHAR(100) NOT NULL,
-                      password VARCHAR(100) NOT NULL
+                      password VARCHAR(100) NOT NULL,
+                      number VARCHAR (64) NOT NULL,
+                      address VARCHAR (100) NOT NULL
 );
 
 CREATE TABLE Admin (
-                       adminId INT PRIMARY KEY AUTO_INCREMENT,
+                       adminId INT PRIMARY KEY ,
                        name VARCHAR(100) NOT NULL,
                        password VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE Plan (
-                      planId INT PRIMARY KEY AUTO_INCREMENT,
+                      planId INT PRIMARY KEY ,
                       planName VARCHAR(50) NOT NULL,
                       price DOUBLE NOT NULL,
                       speed VARCHAR(20)
