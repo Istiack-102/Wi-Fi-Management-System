@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 
 public class DBConnection {
     // MySQL connection details
-    private static final String URL = "jdbc:mysql://localhost:3306/wifi_management_db";
+    private static final String URL = "jdbc:mysql://localhost:3306/wifi_management_utils";
     private static final String USER = "root";
     private static final String PASSWORD = ""; // XAMPP default is empty
 
