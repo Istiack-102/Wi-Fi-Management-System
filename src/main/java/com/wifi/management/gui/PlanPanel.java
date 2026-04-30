@@ -1,38 +1,34 @@
 package com.wifi.management.gui;
 
 import com.wifi.management.utils.DBConnection;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.*;
 
-public class PlanFrame extends JFrame {
+public class PlanPanel extends JPanel {
 
-    JTable table;
-    DefaultTableModel model;
+    public PlanPanel() {
 
-    public PlanFrame() {
-        setTitle("Plans");
-        setSize(500, 300);
+        setLayout(new BorderLayout());
 
-        model = new DefaultTableModel();
-        table = new JTable(model);
+        DefaultTableModel model = new DefaultTableModel();
+        JTable table = new JTable(model);
 
         model.addColumn("ID");
         model.addColumn("Plan");
         model.addColumn("Speed");
         model.addColumn("Price");
 
-        loadPlans();
-
         add(new JScrollPane(table), BorderLayout.CENTER);
-        setVisible(true);
-    }
 
-    private void loadPlans() {
         try (Connection con = DBConnection.getConnection()) {
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM plans");
+
+            ResultSet rs = con.createStatement()
+                    .executeQuery("SELECT * FROM plans");
+
+            model.setRowCount(0);
 
             while (rs.next()) {
                 model.addRow(new Object[]{
@@ -42,6 +38,7 @@ public class PlanFrame extends JFrame {
                         rs.getDouble("monthly_price")
                 });
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
