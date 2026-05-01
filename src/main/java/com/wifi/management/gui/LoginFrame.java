@@ -1,7 +1,9 @@
 package com.wifi.management.gui;
 
+import com.wifi.management.utils.DBConnection;
+
 import javax.swing.*;
-import java.awt.*;
+import java.sql.*;
 
 public class LoginFrame extends JFrame {
 
@@ -35,13 +37,39 @@ public class LoginFrame extends JFrame {
         add(loginBtn);
 
         loginBtn.addActionListener(e -> {
-            // simple demo login
-            if (userField.getText().equals("admin")) {
-                dispose();
-                new AdminDashboard();
-            } else {
-                dispose();
-                new UserDashboard();
+
+            String username = userField.getText();
+            String password = new String(passField.getPassword());
+
+            try (Connection con = DBConnection.getConnection()) {
+
+                String sql = "SELECT user_id, role_id FROM users WHERE username=? AND password_hash=?";
+                PreparedStatement pst = con.prepareStatement(sql);
+
+                pst.setString(1, username);
+                pst.setString(2, password);
+
+                ResultSet rs = pst.executeQuery();
+
+                if (rs.next()) {
+
+                    int userId = rs.getInt("user_id");
+                    int roleId = rs.getInt("role_id");
+
+                    dispose();
+
+                    if (roleId == 1) {
+                        new AdminDashboard();
+                    } else {
+                        new UserDashboard(userId); // ✅ FIXED
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(this, "Invalid login!");
+                }
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         });
 

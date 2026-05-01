@@ -24,27 +24,42 @@ public class AdminDashboard extends JFrame {
         JButton payBtn = btn("Payments", 70);
         JButton custBtn = btn("Customers", 120);
         JButton subBtn = btn("Subscriptions", 170);
-        JButton logBtn = btn("Usage Logs", 220);
+        JButton usageBtn = btn("Usage Logs", 220);
 
         sidebar.add(planBtn);
         sidebar.add(payBtn);
         sidebar.add(custBtn);
         sidebar.add(subBtn);
-        sidebar.add(logBtn);
+        sidebar.add(usageBtn);
 
         mainPanel = new JPanel();
         mainPanel.setBounds(200, 0, 800, 600);
         mainPanel.setLayout(new BorderLayout());
 
         mainPanel.add(new JLabel("Admin Dashboard", SwingConstants.CENTER));
+
         add(sidebar);
         add(mainPanel);
 
-        planBtn.addActionListener(e -> open(new PlanPanel()));
-        payBtn.addActionListener(e -> open(new PaymentPanel()));
-        custBtn.addActionListener(e -> open(new CustomerPanel()));
-        subBtn.addActionListener(e -> open(new SubscriptionPanel()));
-        logBtn.addActionListener(e -> open(new UsageLogPanel()));
+        planBtn.addActionListener(e ->
+                open(new PlanPanel())
+        );
+
+        payBtn.addActionListener(e ->
+                open(new PaymentPanel(0, true)) // admin mode
+        );
+
+        custBtn.addActionListener(e ->
+                open(new CustomerPanel())
+        );
+
+        subBtn.addActionListener(e ->
+                open(new SubscriptionPanel())
+        );
+
+        usageBtn.addActionListener(e ->
+                open(new UsagePanel(0,true)) // admin view all
+        );
 
         setVisible(true);
     }

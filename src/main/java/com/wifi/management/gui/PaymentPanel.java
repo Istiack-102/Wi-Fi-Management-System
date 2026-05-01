@@ -9,24 +9,56 @@ import java.sql.*;
 
 public class PaymentPanel extends JPanel {
 
-    public PaymentPanel() {
+    private JLabel totalLabel;
+    private JTable table;
+    private DefaultTableModel model;
+
+    private int userId;
+    private boolean isAdmin;
+
+    public PaymentPanel(int userId, boolean isAdmin) {
+
+        this.userId = userId;
+        this.isAdmin = isAdmin;
 
         setLayout(new BorderLayout());
 
-        DefaultTableModel model = new DefaultTableModel();
-        JTable table = new JTable(model);
+        totalLabel = new JLabel("Loading...", SwingConstants.CENTER);
+        totalLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        add(totalLabel, BorderLayout.NORTH);
+
+        model = new DefaultTableModel();
+        table = new JTable(model);
 
         model.addColumn("Transaction ID");
         model.addColumn("User ID");
         model.addColumn("Amount");
-        model.addColumn("Method");
+        model.addColumn("Payment Method");
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
+        loadData();
+        loadTotal();
+    }
+    private void loadData() {
+
         try (Connection con = DBConnection.getConnection()) {
 
-            ResultSet rs = con.createStatement()
-                    .executeQuery("SELECT * FROM transactions");
+            String sql;
+
+            if (isAdmin) {
+                sql = "SELECT * FROM transactions";
+            } else {
+                sql = "SELECT * FROM transactions WHERE user_id = ?";
+            }
+
+            PreparedStatement pst = con.prepareStatement(sql);
+
+            if (!isAdmin) {
+                pst.setInt(1, userId);
+            }
+
+            ResultSet rs = pst.executeQuery();
 
             model.setRowCount(0);
 
@@ -37,6 +69,38 @@ public class PaymentPanel extends JPanel {
                         rs.getDouble("amount"),
                         rs.getString("payment_method")
                 });
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadTotal() {
+
+        try (Connection con = DBConnection.getConnection()) {
+
+            if (isAdmin) {
+
+                String sql = "SELECT SUM(amount) FROM transactions";
+                Statement st = con.createStatement();
+                ResultSet rs = st.executeQuery(sql);
+
+                if (rs.next()) {
+                    totalLabel.setText("Total Revenue: " + rs.getDouble(1) + " BDT");
+                }
+
+            } else {
+
+                String sql = "SELECT total_payment(?)";
+                PreparedStatement pst = con.prepareStatement(sql);
+                pst.setInt(1, userId);
+
+                ResultSet rs = pst.executeQuery();
+
+                if (rs.next()) {
+                    totalLabel.setText("Your Total Payment: " + rs.getDouble(1) + " BDT");
+                }
             }
 
         } catch (Exception e) {

@@ -6,15 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="f6001344-6f99-458c-aef0-7e14e07b7d77" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/UserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/UserDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/AdminDashboard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/AdminDashboard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/CustomerDetailsFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/CustomerPanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/LoginFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/LoginFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/PaymentFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/PaymentPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/PlanFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/PlanPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/SubscriptionFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/SubscriptionPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/UsageLogFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/UsageLogPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/PaymentPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/PaymentPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/UsageLogPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/UsagePanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/UserDashboard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/UserDashboard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/utils/DBConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/utils/DBConnection.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -5,9 +5,13 @@ import java.awt.*;
 
 public class UserDashboard extends JFrame {
 
+    private int userId;
+
     JPanel sidebar, mainPanel;
 
-    public UserDashboard() {
+    public UserDashboard(int userId) {
+
+        this.userId = userId;
 
         setTitle("User Dashboard");
         setSize(900, 550);
@@ -21,7 +25,7 @@ public class UserDashboard extends JFrame {
         sidebar.setLayout(null);
 
         JButton planBtn = createButton("My Plan", 50);
-        JButton paymentBtn = createButton("Payment History", 110);
+        JButton paymentBtn = createButton("Payment", 110);
         JButton usageBtn = createButton("Usage", 170);
 
         sidebar.add(planBtn);
@@ -32,17 +36,22 @@ public class UserDashboard extends JFrame {
         mainPanel.setBounds(200, 0, 700, 550);
         mainPanel.setLayout(new BorderLayout());
 
-        JLabel welcome = new JLabel("Welcome User Dashboard", SwingConstants.CENTER);
-        welcome.setFont(new Font("Arial", Font.BOLD, 22));
-
-        mainPanel.add(welcome, BorderLayout.CENTER);
+        mainPanel.add(new JLabel("Welcome User", SwingConstants.CENTER));
 
         add(sidebar);
         add(mainPanel);
 
-        planBtn.addActionListener(e -> openPanel("MyPlan"));
-        paymentBtn.addActionListener(e -> openPanel("PaymentHistory"));
-        usageBtn.addActionListener(e -> openPanel("Usage"));
+        planBtn.addActionListener(e ->
+                openPanel(new PlanPanel())
+        );
+
+        paymentBtn.addActionListener(e ->
+                openPanel(new PaymentPanel(userId, false))
+        );
+
+        usageBtn.addActionListener(e ->
+                openPanel(new UsagePanel(userId,false))
+        );
 
         setVisible(true);
     }
@@ -50,31 +59,13 @@ public class UserDashboard extends JFrame {
     private JButton createButton(String text, int y) {
         JButton btn = new JButton(text);
         btn.setBounds(20, y, 160, 40);
-        btn.setBackground(new Color(60, 63, 65));
-        btn.setForeground(Color.WHITE);
         return btn;
     }
 
-    private void openPanel(String name) {
-
+    private void openPanel(JPanel panel) {
         mainPanel.removeAll();
         mainPanel.setLayout(new BorderLayout());
-
-        switch (name) {
-
-            case "MyPlan":
-                mainPanel.add(new PlanPanel());
-                break;
-
-            case "PaymentHistory":
-                mainPanel.add(new PaymentPanel());
-                break;
-
-            case "Usage":
-                mainPanel.add(new UsageLogPanel());
-                break;
-        }
-
+        mainPanel.add(panel, BorderLayout.CENTER);
         mainPanel.revalidate();
         mainPanel.repaint();
     }
