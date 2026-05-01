@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f6001344-6f99-458c-aef0-7e14e07b7d77" name="Changes" comment="" />
+    <list default="true" id="f6001344-6f99-458c-aef0-7e14e07b7d77" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/utils/Strong_password_check.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/utils/Strong_password_check.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

@@ -1,4 +1,4 @@
-package com.wifi.management;
+package com.wifi.management.gui;
 
 import com.wifi.management.gui.LoginFrame;
 
