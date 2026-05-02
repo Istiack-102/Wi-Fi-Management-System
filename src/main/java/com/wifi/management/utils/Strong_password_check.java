@@ -14,27 +14,22 @@ public class Strong_password_check {
             return missing;
         }
 
-        // Length check
         if (password.length() < 8) {
             missing.add("At least 8 characters");
         }
 
-        // Lowercase check
         if (!password.matches(".*[a-z].*")) {
             missing.add("At least one lowercase letter (a-z)");
         }
 
-        // Uppercase check
         if (!password.matches(".*[A-Z].*")) {
             missing.add("At least one uppercase letter (A-Z)");
         }
 
-        // Digit check
         if (!password.matches(".*\\d.*")) {
             missing.add("At least one digit (0-9)");
         }
 
-        // Special character check
         if (!password.matches(".*[@$!%*?&].*")) {
             missing.add("At least one special character (@$!%*?&)");
         }

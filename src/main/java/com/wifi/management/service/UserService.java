@@ -15,6 +15,10 @@ public class UserService {
         this.userDAO = new UserDAO();
     }
 
+    public boolean isVerifiedCustomer(int userId) {
+        return userDAO.isExistingCustomer(userId);
+    }
+
     // Handles secure login logic
     public User authenticateUser(String username, String plainPassword) {
         // Hash the input password to match database record
@@ -50,7 +54,7 @@ public class UserService {
         return userDAO.searchUserById(userId);
     }
 
-    // Retrieves full details for user profile dashboard
+    // Retrieves full details for user profile dashboard (View থেকে ডাটা আনে)
     public User getUserProfile(int userId) {
         return userDAO.getUserFullProfile(userId);
     }

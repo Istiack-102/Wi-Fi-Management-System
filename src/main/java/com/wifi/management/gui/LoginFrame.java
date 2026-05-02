@@ -1,78 +1,99 @@
 package com.wifi.management.gui;
 
-import com.wifi.management.utils.DBConnection;
-
+import com.wifi.management.model.User;
+import com.wifi.management.service.UserService;
 import javax.swing.*;
-import java.sql.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class LoginFrame extends JFrame {
 
+    private JTextField txtUsername;
+    private JPasswordField txtPassword;
+    private JButton btnLogin, btnRegister;
+    private UserService userService;
+
     public LoginFrame() {
+        userService = new UserService();
+        prepareGUI();
+    }
 
-        setTitle("Login");
+    private void prepareGUI() {
+        setTitle("WiFi Management System - Login");
         setSize(400, 300);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null); // Center on screen
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new java.awt.Insets(10, 10, 10, 10);
 
-        JLabel userLabel = new JLabel("Username:");
-        userLabel.setBounds(50, 50, 100, 25);
+        // --- UI Components ---
+        JLabel lblTitle = new JLabel("Welcome Back");
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        add(lblTitle, gbc);
 
-        JTextField userField = new JTextField();
-        userField.setBounds(150, 50, 180, 25);
+        gbc.gridwidth = 1;
+        gbc.gridy = 1; gbc.gridx = 0;
+        add(new JLabel("Username:"), gbc);
 
-        JLabel passLabel = new JLabel("Password:");
-        passLabel.setBounds(50, 100, 100, 25);
+        txtUsername = new JTextField(15);
+        gbc.gridx = 1;
+        add(txtUsername, gbc);
 
-        JPasswordField passField = new JPasswordField();
-        passField.setBounds(150, 100, 180, 25);
+        gbc.gridy = 2; gbc.gridx = 0;
+        add(new JLabel("Password:"), gbc);
 
-        JButton loginBtn = new JButton("Login");
-        loginBtn.setBounds(150, 150, 100, 30);
+        txtPassword = new JPasswordField(15);
+        gbc.gridx = 1;
+        add(txtPassword, gbc);
 
-        add(userLabel);
-        add(userField);
-        add(passLabel);
-        add(passField);
-        add(loginBtn);
+        // --- Buttons ---
+        btnLogin = new JButton("Login");
+        gbc.gridy = 3; gbc.gridx = 1;
+        add(btnLogin, gbc);
 
-        loginBtn.addActionListener(e -> {
+        btnRegister = new JButton("No account? Sign Up");
+        btnRegister.setBorderPainted(false);
+        btnRegister.setContentAreaFilled(false);
+        btnRegister.setForeground(Color.BLUE);
+        gbc.gridy = 4;
+        add(btnRegister, gbc);
 
-            String username = userField.getText();
-            String password = new String(passField.getPassword());
+        // --- Action Listeners ---
+        btnLogin.addActionListener(this::handleLogin);
 
-            try (Connection con = DBConnection.getConnection()) {
-
-                String sql = "SELECT user_id, role_id FROM users WHERE username=? AND password_hash=?";
-                PreparedStatement pst = con.prepareStatement(sql);
-
-                pst.setString(1, username);
-                pst.setString(2, password);
-
-                ResultSet rs = pst.executeQuery();
-
-                if (rs.next()) {
-
-                    int userId = rs.getInt("user_id");
-                    int roleId = rs.getInt("role_id");
-
-                    dispose();
-
-                    if (roleId == 1) {
-                        new AdminDashboard();
-                    } else {
-                        new UserDashboard(userId); // ✅ FIXED
-                    }
-
-                } else {
-                    JOptionPane.showMessageDialog(this, "Invalid login!");
-                }
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+        btnRegister.addActionListener(e -> {
+            this.dispose();
+            RegisterFrame regFrame = new RegisterFrame();
+            regFrame.setVisible(true);
         });
+    }
 
-        setVisible(true);
+    private void handleLogin(ActionEvent e) {
+        String username = txtUsername.getText().trim();
+        String password = new String(txtPassword.getPassword());
+
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Call the service layer (which handles hashing and DB check)
+        User user = userService.authenticateUser(username, password);
+
+        if (user != null) {
+            this.dispose(); // Close login window
+
+            if (user.getRoleId() == 1) {
+                // Open Admin Dashboard
+                new AdminDashboard().setVisible(true);
+            } else {
+                // Open User Dashboard and pass the user object to show their profile
+                new UserDashboard(user).setVisible(true);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Invalid credentials!", "Login Failed", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

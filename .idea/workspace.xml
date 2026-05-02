@@ -5,7 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6001344-6f99-458c-aef0-7e14e07b7d77" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/RegisterFrame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/UserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/UserDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/AdminDashboard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/AdminDashboard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/CustomerPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/CustomerPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/LoginFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/LoginFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/PaymentPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/PaymentPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/PlanPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/PlanPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/SubscriptionPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/SubscriptionPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/UsagePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/UsagePanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/UserDashboard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/UserDashboard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/utils/DBConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/utils/DBConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/utils/Strong_password_check.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/utils/Strong_password_check.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,8 +44,8 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Istiack-102/Wi-Fi-Management-System&quot;,
-    &quot;accountId&quot;: &quot;00ed7a6b-e476-4d54-a431-af5e9f441b8a&quot;
+    &quot;url&quot;: &quot;https://github.com/Istiack-102/Wi-Fi-Management-System.git&quot;,
+    &quot;accountId&quot;: &quot;9d9a45f1-c26c-4e01-a88e-434f12dd64ce&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -43,18 +57,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Main.executor": "Run",
-    "Application.TestDB.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Merging dev",
-    "last_opened_file_path": "D:/DBMS_Project/Wifi_Management_System"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Application.TestDB.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Merging dev&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/DBMS_Project/Wifi_Management_System&quot;
   }
-}]]></component>
+}</component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="f6001344-6f99-458c-aef0-7e14e07b7d77" name="Changes" comment="" />

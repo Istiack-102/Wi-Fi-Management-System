@@ -69,7 +69,6 @@ public class UserDAO {
         return null;
     }
     public User getUserFullProfile(int userId) {
-        // Uses the customer dashboard view to get combined info
         String sql = "SELECT * FROM view_customer_dashboard WHERE user_id = ?";
 
         try (Connection conn = DBConnection.getConnection();
@@ -80,12 +79,13 @@ public class UserDAO {
                 if (rs.next()) {
                     User user = new User();
                     user.setUserId(rs.getInt("user_id"));
+                    user.setUsername(rs.getString("username")); // ইউজারনেম সেট করা
                     user.setFullName(rs.getString("full_name"));
-                    user.setPhone(rs.getString("phone"));
-                    user.setAddress(rs.getString("installation_address")); // Added to model
 
-                    // Note: You can also pass plan_name and expiry_date to your GUI
-                    // from this same ResultSet to show their active package.
+                    // ভিউ থেকে ফোন নম্বর এবং অ্যাড্রেস নেওয়া
+                    user.setPhone(rs.getString("phone"));
+                    user.setAddress(rs.getString("installation_address"));
+
                     return user;
                 }
             }
@@ -117,5 +117,27 @@ public class UserDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public boolean isExistingCustomer(int userId) {
+        String sql = "SELECT mac_address FROM customer_details WHERE user_id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String mac = rs.getString("mac_address");
+                    // যদি MAC অ্যাড্রেস null না হয় এবং খালি না থাকে, তবে সে পুরাতন কাস্টমার
+                    return (mac != null && !mac.trim().isEmpty());
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error checking customer status: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
     }
 }

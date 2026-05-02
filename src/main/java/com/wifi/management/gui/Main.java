@@ -1,9 +1,23 @@
-package com.wifi.management;
+package com.wifi.management.gui;
 
-import com.wifi.management.gui.LoginFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 public class Main {
+
     public static void main(String[] args) {
-        new LoginFrame();
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            System.out.println("Could not set system look and feel.");
+        }
+
+
+        SwingUtilities.invokeLater(() -> {
+
+            LoginFrame loginFrame = new LoginFrame();
+            loginFrame.setVisible(true);
+        });
     }
 }

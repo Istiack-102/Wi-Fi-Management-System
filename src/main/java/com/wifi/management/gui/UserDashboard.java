@@ -1,72 +1,139 @@
 package com.wifi.management.gui;
 
+import com.wifi.management.model.User;
+import com.wifi.management.database_operation.UserDAO;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * UserDashboard handles the main interface for Customers.
+ * It displays user information and allows navigation between Profile, Plans, and Subscriptions.
+ */
 public class UserDashboard extends JFrame {
+    private User currentUser;
+    private JPanel contentPanel;
+    private UserDAO userDAO;
 
-    private int userId;
+    public UserDashboard(User loggedInUser) {
+        this.userDAO = new UserDAO();
 
-    JPanel sidebar, mainPanel;
+        this.currentUser = userDAO.getUserFullProfile(loggedInUser.getUserId());
 
-    public UserDashboard(int userId) {
+        if (this.currentUser == null) {
+            this.currentUser = loggedInUser;
+        }
 
-        this.userId = userId;
+        prepareGUI();
+    }
 
-        setTitle("User Dashboard");
-        setSize(900, 550);
+    private void prepareGUI() {
+
+        setTitle("WiFi Management - Customer Dashboard");
+        setSize(1150, 750);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(null);
+        setLayout(new BorderLayout());
 
-        sidebar = new JPanel();
-        sidebar.setBounds(0, 0, 200, 550);
-        sidebar.setBackground(new Color(30, 30, 30));
-        sidebar.setLayout(null);
+        JPanel sidebar = new JPanel();
+        sidebar.setBackground(new Color(44, 62, 80));
+        sidebar.setPreferredSize(new Dimension(250, 750));
+        sidebar.setLayout(new GridLayout(10, 1, 0, 5));
 
-        JButton planBtn = createButton("My Plan", 50);
-        JButton paymentBtn = createButton("Payment", 110);
-        JButton usageBtn = createButton("Usage", 170);
+        JLabel lblBrand = new JLabel("  WIFI MANAGER", SwingConstants.LEFT);
+        lblBrand.setForeground(new Color(52, 152, 219));
+        lblBrand.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        sidebar.add(lblBrand);
 
-        sidebar.add(planBtn);
-        sidebar.add(paymentBtn);
-        sidebar.add(usageBtn);
 
-        mainPanel = new JPanel();
-        mainPanel.setBounds(200, 0, 700, 550);
-        mainPanel.setLayout(new BorderLayout());
+        JButton btnProfile = createSidebarButton("👤 My Profile");
+        JButton btnPlans = createSidebarButton("🌐 Internet Plans");
+        JButton btnStatus = createSidebarButton("💳 Subscription");
+        JButton btnLogout = createSidebarButton("🚪 Logout");
 
-        mainPanel.add(new JLabel("Welcome User", SwingConstants.CENTER));
+        btnLogout.setBackground(new Color(192, 57, 43));
+        btnLogout.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) { btnLogout.setBackground(new Color(231, 76, 60)); }
+            public void mouseExited(java.awt.event.MouseEvent evt) { btnLogout.setBackground(new Color(192, 57, 43)); }
+        });
 
-        add(sidebar);
-        add(mainPanel);
+        sidebar.add(btnProfile);
+        sidebar.add(btnPlans);
+        sidebar.add(btnStatus);
+        sidebar.add(new JLabel(""));
+        sidebar.add(btnLogout);
+        add(sidebar, BorderLayout.WEST);
 
-        planBtn.addActionListener(e ->
-                openPanel(new PlanPanel())
-        );
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(Color.WHITE);
+        header.setPreferredSize(new Dimension(900, 75));
+        header.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(224, 224, 224)));
 
-        paymentBtn.addActionListener(e ->
-                openPanel(new PaymentPanel(userId, false))
-        );
+        JLabel lblUser = new JLabel("  Welcome, " + currentUser.getUsername() + " (#" + currentUser.getUserId() + ")");
+        lblUser.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        header.add(lblUser, BorderLayout.WEST);
 
-        usageBtn.addActionListener(e ->
-                openPanel(new UsagePanel(userId,false))
-        );
+        String phone = (currentUser.getPhone() != null) ? currentUser.getPhone() : "No Phone";
+        String address = (currentUser.getAddress() != null) ? currentUser.getAddress() : "No Address";
+        JLabel lblContact = new JLabel("📞 " + phone + "  |  📍 " + address + "   ");
+        lblContact.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        lblContact.setForeground(new Color(127, 140, 141));
+        header.add(lblContact, BorderLayout.EAST);
 
-        setVisible(true);
+        add(header, BorderLayout.NORTH);
+
+        contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(new Color(241, 242, 246));
+        add(contentPanel, BorderLayout.CENTER);
+
+        showPanel(new CustomerPanel(currentUser));
+
+
+        btnProfile.addActionListener(e -> showPanel(new CustomerPanel(currentUser)));
+
+        btnPlans.addActionListener(e -> showPanel(new PlanPanel(this, currentUser)));
+
+        btnStatus.addActionListener(e -> showPanel(new SubscriptionPanel(currentUser)));
+
+        btnLogout.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to logout?", "Logout", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                this.dispose();
+                new LoginFrame().setVisible(true);
+            }
+        });
     }
 
-    private JButton createButton(String text, int y) {
+
+    public void showPanel(JPanel panel) {
+        contentPanel.removeAll();
+        contentPanel.add(panel, BorderLayout.CENTER);
+        contentPanel.repaint();
+        contentPanel.revalidate();
+    }
+
+
+    private JButton createSidebarButton(String text) {
         JButton btn = new JButton(text);
-        btn.setBounds(20, y, 160, 40);
-        return btn;
-    }
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        btn.setForeground(Color.WHITE);
+        btn.setBackground(new Color(44, 62, 80));
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setOpaque(true);
+        btn.setContentAreaFilled(true);
+        btn.setHorizontalAlignment(SwingConstants.LEFT);
+        btn.setMargin(new Insets(0, 25, 0, 0));
 
-    private void openPanel(JPanel panel) {
-        mainPanel.removeAll();
-        mainPanel.setLayout(new BorderLayout());
-        mainPanel.add(panel, BorderLayout.CENTER);
-        mainPanel.revalidate();
-        mainPanel.repaint();
+
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btn.setBackground(new Color(52, 73, 94));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btn.setBackground(new Color(44, 62, 80));
+            }
+        });
+
+        return btn;
     }
 }

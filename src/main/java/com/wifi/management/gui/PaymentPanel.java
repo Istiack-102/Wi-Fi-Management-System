@@ -1,110 +1,122 @@
 package com.wifi.management.gui;
 
-import com.wifi.management.utils.DBConnection;
-
+import com.wifi.management.model.Plan;
+import com.wifi.management.model.User;
+import com.wifi.management.utils.Card_Checker;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.sql.*;
 
 public class PaymentPanel extends JPanel {
 
-    private JLabel totalLabel;
-    private JTable table;
-    private DefaultTableModel model;
+    private UserDashboard parentDashboard;
+    private User currentUser;
+    private Plan selectedPlan;
 
-    private int userId;
-    private boolean isAdmin;
+    private JTextField txtCardNumber, txtExpiry, txtCVV;
+    private JButton btnPay, btnCancel;
 
-    public PaymentPanel(int userId, boolean isAdmin) {
-
-        this.userId = userId;
-        this.isAdmin = isAdmin;
-
-        setLayout(new BorderLayout());
-
-        totalLabel = new JLabel("Loading...", SwingConstants.CENTER);
-        totalLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        add(totalLabel, BorderLayout.NORTH);
-
-        model = new DefaultTableModel();
-        table = new JTable(model);
-
-        model.addColumn("Transaction ID");
-        model.addColumn("User ID");
-        model.addColumn("Amount");
-        model.addColumn("Payment Method");
-
-        add(new JScrollPane(table), BorderLayout.CENTER);
-
-        loadData();
-        loadTotal();
-    }
-    private void loadData() {
-
-        try (Connection con = DBConnection.getConnection()) {
-
-            String sql;
-
-            if (isAdmin) {
-                sql = "SELECT * FROM transactions";
-            } else {
-                sql = "SELECT * FROM transactions WHERE user_id = ?";
-            }
-
-            PreparedStatement pst = con.prepareStatement(sql);
-
-            if (!isAdmin) {
-                pst.setInt(1, userId);
-            }
-
-            ResultSet rs = pst.executeQuery();
-
-            model.setRowCount(0);
-
-            while (rs.next()) {
-                model.addRow(new Object[]{
-                        rs.getString("transaction_id"),
-                        rs.getInt("user_id"),
-                        rs.getDouble("amount"),
-                        rs.getString("payment_method")
-                });
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public PaymentPanel(UserDashboard dashboard, User user, Plan plan) {
+        this.parentDashboard = dashboard;
+        this.currentUser = user;
+        this.selectedPlan = plan;
+        prepareGUI();
     }
 
-    private void loadTotal() {
+    private void prepareGUI() {
+        setLayout(new BorderLayout(20, 20));
+        setBackground(new Color(241, 242, 246));
+        setBorder(BorderFactory.createEmptyBorder(40, 100, 40, 100));
 
-        try (Connection con = DBConnection.getConnection()) {
+        // --- 1. Summary Header ---
+        JPanel summaryPanel = new JPanel(new GridLayout(2, 1));
+        summaryPanel.setOpaque(false);
 
-            if (isAdmin) {
+        JLabel lblTitle = new JLabel("Complete Your Payment");
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 22));
+        lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
 
-                String sql = "SELECT SUM(amount) FROM transactions";
-                Statement st = con.createStatement();
-                ResultSet rs = st.executeQuery(sql);
+        JLabel lblAmount = new JLabel("Total Amount to Pay: ৳ " + selectedPlan.getMonthlyPrice());
+        lblAmount.setFont(new Font("Arial", Font.PLAIN, 18));
+        lblAmount.setForeground(new Color(192, 57, 43)); // Red for urgency/amount
+        lblAmount.setHorizontalAlignment(SwingConstants.CENTER);
 
-                if (rs.next()) {
-                    totalLabel.setText("Total Revenue: " + rs.getDouble(1) + " BDT");
-                }
+        summaryPanel.add(lblTitle);
+        summaryPanel.add(lblAmount);
+        add(summaryPanel, BorderLayout.NORTH);
 
-            } else {
+        // --- 2. Card Form ---
+        JPanel form = new JPanel(new GridBagLayout());
+        form.setBackground(Color.WHITE);
+        form.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
+                BorderFactory.createEmptyBorder(30, 30, 30, 30)
+        ));
 
-                String sql = "SELECT total_payment(?)";
-                PreparedStatement pst = con.prepareStatement(sql);
-                pst.setInt(1, userId);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-                ResultSet rs = pst.executeQuery();
+        // Card Number
+        gbc.gridx = 0; gbc.gridy = 0;
+        form.add(new JLabel("Card Number:"), gbc);
+        txtCardNumber = new JTextField(20);
+        gbc.gridx = 1;
+        form.add(txtCardNumber, gbc);
 
-                if (rs.next()) {
-                    totalLabel.setText("Your Total Payment: " + rs.getDouble(1) + " BDT");
-                }
-            }
+        // Expiry & CVV Row
+        gbc.gridx = 0; gbc.gridy = 1;
+        form.add(new JLabel("Expiry (MM/YY):"), gbc);
+        txtExpiry = new JTextField(5);
+        gbc.gridx = 1;
+        form.add(txtExpiry, gbc);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        gbc.gridx = 0; gbc.gridy = 2;
+        form.add(new JLabel("CVV:"), gbc);
+        txtCVV = new JPasswordField(3);
+        gbc.gridx = 1;
+        form.add(txtCVV, gbc);
+
+        add(form, BorderLayout.CENTER);
+
+        // --- 3. Action Buttons ---
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        footer.setOpaque(false);
+
+        btnPay = new JButton("Confirm & Pay");
+        btnPay.setBackground(new Color(39, 174, 96));
+        btnPay.setForeground(Color.WHITE);
+        btnPay.setPreferredSize(new Dimension(150, 40));
+
+        btnCancel = new JButton("Cancel");
+        btnCancel.setPreferredSize(new Dimension(100, 40));
+
+        footer.add(btnPay);
+        footer.add(btnCancel);
+        add(footer, BorderLayout.SOUTH);
+
+        // --- Event Handling ---
+        btnPay.addActionListener(e -> processPayment());
+
+        btnCancel.addActionListener(e -> {
+            parentDashboard.showPanel(new PlanPanel(parentDashboard, currentUser));
+        });
+    }
+
+    private void processPayment() {
+        String cardNumber = txtCardNumber.getText().trim();
+
+        // 1. Validate using your Utils class (Luhn Algorithm)
+        if (!Card_Checker.isValidCard(cardNumber)) {
+            JOptionPane.showMessageDialog(this, "Invalid Card Number! Please check again.",
+                    "Payment Failed", JOptionPane.ERROR_MESSAGE);
+            return;
         }
+
+        // 2. Here you would normally call PaymentDAO to save the transaction
+        // For now, we simulate success
+        JOptionPane.showMessageDialog(this, "Payment Successful! \nPlan Activated: " + selectedPlan.getPlanName());
+
+        // 3. Return to Subscription view to see the new active plan
+        parentDashboard.showPanel(new SubscriptionPanel(currentUser));
     }
 }
