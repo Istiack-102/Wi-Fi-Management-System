@@ -5,10 +5,6 @@ import com.wifi.management.database_operation.UserDAO;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * UserDashboard handles the main interface for Customers.
- * It displays user information and allows navigation between Profile, Plans, and Subscriptions.
- */
 public class UserDashboard extends JFrame {
     private User currentUser;
     private JPanel contentPanel;
@@ -16,7 +12,7 @@ public class UserDashboard extends JFrame {
 
     public UserDashboard(User loggedInUser) {
         this.userDAO = new UserDAO();
-
+        // ডাটাবেস থেকে ইউজারের লেটেস্ট তথ্য এবং অ্যাড্রেস/ফোন সংগ্রহ করা
         this.currentUser = userDAO.getUserFullProfile(loggedInUser.getUserId());
 
         if (this.currentUser == null) {
@@ -27,13 +23,13 @@ public class UserDashboard extends JFrame {
     }
 
     private void prepareGUI() {
-
         setTitle("WiFi Management - Customer Dashboard");
         setSize(1150, 750);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
+        // --- SIDEBAR ---
         JPanel sidebar = new JPanel();
         sidebar.setBackground(new Color(44, 62, 80));
         sidebar.setPreferredSize(new Dimension(250, 750));
@@ -44,25 +40,23 @@ public class UserDashboard extends JFrame {
         lblBrand.setFont(new Font("Segoe UI", Font.BOLD, 22));
         sidebar.add(lblBrand);
 
-
         JButton btnProfile = createSidebarButton("👤 My Profile");
         JButton btnPlans = createSidebarButton("🌐 Internet Plans");
-        JButton btnStatus = createSidebarButton("💳 Subscription");
+        JButton btnPayment = createSidebarButton("💳 Make Payment");
+        JButton btnStatus = createSidebarButton("📊 Subscription Status");
         JButton btnLogout = createSidebarButton("🚪 Logout");
 
         btnLogout.setBackground(new Color(192, 57, 43));
-        btnLogout.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) { btnLogout.setBackground(new Color(231, 76, 60)); }
-            public void mouseExited(java.awt.event.MouseEvent evt) { btnLogout.setBackground(new Color(192, 57, 43)); }
-        });
 
         sidebar.add(btnProfile);
         sidebar.add(btnPlans);
+        sidebar.add(btnPayment);
         sidebar.add(btnStatus);
         sidebar.add(new JLabel(""));
         sidebar.add(btnLogout);
         add(sidebar, BorderLayout.WEST);
 
+        // --- HEADER ---
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(Color.WHITE);
         header.setPreferredSize(new Dimension(900, 75));
@@ -81,16 +75,22 @@ public class UserDashboard extends JFrame {
 
         add(header, BorderLayout.NORTH);
 
+        // --- CONTENT PANEL ---
         contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBackground(new Color(241, 242, 246));
         add(contentPanel, BorderLayout.CENTER);
 
+        // ডিফল্টভাবে প্রোফাইল দেখাবে
         showPanel(new CustomerPanel(currentUser));
 
-
+        // --- ACTION LISTENERS ---
         btnProfile.addActionListener(e -> showPanel(new CustomerPanel(currentUser)));
 
+        // এখানে 'this' পাস করা জরুরি যাতে PlanPanel ড্যাশবোর্ডকে চিনতে পারে
         btnPlans.addActionListener(e -> showPanel(new PlanPanel(this, currentUser)));
+
+        // পেমেন্ট প্যানেল লোড করা
+        btnPayment.addActionListener(e -> showPanel(new PaymentPanel(this, currentUser)));
 
         btnStatus.addActionListener(e -> showPanel(new SubscriptionPanel(currentUser)));
 
@@ -103,14 +103,12 @@ public class UserDashboard extends JFrame {
         });
     }
 
-
     public void showPanel(JPanel panel) {
         contentPanel.removeAll();
         contentPanel.add(panel, BorderLayout.CENTER);
         contentPanel.repaint();
         contentPanel.revalidate();
     }
-
 
     private JButton createSidebarButton(String text) {
         JButton btn = new JButton(text);
@@ -124,14 +122,9 @@ public class UserDashboard extends JFrame {
         btn.setHorizontalAlignment(SwingConstants.LEFT);
         btn.setMargin(new Insets(0, 25, 0, 0));
 
-
         btn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btn.setBackground(new Color(52, 73, 94));
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btn.setBackground(new Color(44, 62, 80));
-            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) { btn.setBackground(new Color(52, 73, 94)); }
+            public void mouseExited(java.awt.event.MouseEvent evt) { btn.setBackground(new Color(44, 62, 80)); }
         });
 
         return btn;

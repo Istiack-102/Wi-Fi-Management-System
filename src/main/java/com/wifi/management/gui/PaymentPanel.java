@@ -1,122 +1,134 @@
 package com.wifi.management.gui;
 
-import com.wifi.management.model.Plan;
 import com.wifi.management.model.User;
-import com.wifi.management.utils.Card_Checker;
+import com.wifi.management.service.PaymentService;
 import javax.swing.*;
 import java.awt.*;
 
 public class PaymentPanel extends JPanel {
-
-    private UserDashboard parentDashboard;
+    private UserDashboard parent;
     private User currentUser;
-    private Plan selectedPlan;
+    private PaymentService paymentService;
 
-    private JTextField txtCardNumber, txtExpiry, txtCVV;
-    private JButton btnPay, btnCancel;
+    // GUI Components
+    private JTextField txtCardNumber;
+    private JTextField txtExpiry; // নতুন ফিল্ড
+    private JTextField txtCVC;    // নতুন ফিল্ড
+    private JComboBox<String> comboMethod;
+    private JTextField txtPlanId;
+    private JButton btnPay;
 
-    public PaymentPanel(UserDashboard dashboard, User user, Plan plan) {
-        this.parentDashboard = dashboard;
+    public PaymentPanel(UserDashboard parent, User user) {
+        this.parent = parent;
         this.currentUser = user;
-        this.selectedPlan = plan;
+        this.paymentService = new PaymentService();
+
+        setLayout(new GridBagLayout());
+        setBackground(new Color(245, 246, 250));
         prepareGUI();
     }
 
     private void prepareGUI() {
-        setLayout(new BorderLayout(20, 20));
-        setBackground(new Color(241, 242, 246));
-        setBorder(BorderFactory.createEmptyBorder(40, 100, 40, 100));
-
-        // --- 1. Summary Header ---
-        JPanel summaryPanel = new JPanel(new GridLayout(2, 1));
-        summaryPanel.setOpaque(false);
-
-        JLabel lblTitle = new JLabel("Complete Your Payment");
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 22));
-        lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
-
-        JLabel lblAmount = new JLabel("Total Amount to Pay: ৳ " + selectedPlan.getMonthlyPrice());
-        lblAmount.setFont(new Font("Arial", Font.PLAIN, 18));
-        lblAmount.setForeground(new Color(192, 57, 43)); // Red for urgency/amount
-        lblAmount.setHorizontalAlignment(SwingConstants.CENTER);
-
-        summaryPanel.add(lblTitle);
-        summaryPanel.add(lblAmount);
-        add(summaryPanel, BorderLayout.NORTH);
-
-        // --- 2. Card Form ---
-        JPanel form = new JPanel(new GridBagLayout());
-        form.setBackground(Color.WHITE);
-        form.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
-                BorderFactory.createEmptyBorder(30, 30, 30, 30)
-        ));
-
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(8, 10, 8, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Card Number
-        gbc.gridx = 0; gbc.gridy = 0;
-        form.add(new JLabel("Card Number:"), gbc);
-        txtCardNumber = new JTextField(20);
-        gbc.gridx = 1;
-        form.add(txtCardNumber, gbc);
+        // Title
+        JLabel lblTitle = new JLabel("💳 Secure Payment Gateway", SwingConstants.CENTER);
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        add(lblTitle, gbc);
 
-        // Expiry & CVV Row
-        gbc.gridx = 0; gbc.gridy = 1;
-        form.add(new JLabel("Expiry (MM/YY):"), gbc);
-        txtExpiry = new JTextField(5);
+        // Plan ID
+        gbc.gridwidth = 1; gbc.gridy = 1; gbc.gridx = 0;
+        add(new JLabel("Plan ID:"), gbc);
+        txtPlanId = new JTextField(15);
         gbc.gridx = 1;
-        form.add(txtExpiry, gbc);
+        add(txtPlanId, gbc);
 
+        // Payment Method
         gbc.gridx = 0; gbc.gridy = 2;
-        form.add(new JLabel("CVV:"), gbc);
-        txtCVV = new JPasswordField(3);
+        add(new JLabel("Method:"), gbc);
+        comboMethod = new JComboBox<>(new String[]{"Card", "bKash", "Nagad"});
         gbc.gridx = 1;
-        form.add(txtCVV, gbc);
+        add(comboMethod, gbc);
 
-        add(form, BorderLayout.CENTER);
+        // Card Number
+        gbc.gridx = 0; gbc.gridy = 3;
+        add(new JLabel("Card/Account No:"), gbc);
+        txtCardNumber = new JTextField(15);
+        gbc.gridx = 1;
+        add(txtCardNumber, gbc);
 
-        // --- 3. Action Buttons ---
-        JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
-        footer.setOpaque(false);
+        // Expiry Date (MM/YY)
+        gbc.gridx = 0; gbc.gridy = 4;
+        add(new JLabel("Expiry (MM/YY):"), gbc);
+        txtExpiry = new JTextField(15);
+        gbc.gridx = 1;
+        add(txtExpiry, gbc);
 
-        btnPay = new JButton("Confirm & Pay");
-        btnPay.setBackground(new Color(39, 174, 96));
+        // CVC
+        gbc.gridx = 0; gbc.gridy = 5;
+        add(new JLabel("CVC:"), gbc);
+        txtCVC = new JTextField(15);
+        gbc.gridx = 1;
+        add(txtCVC, gbc);
+
+        // Pay Button
+        btnPay = new JButton("Confirm & Pay Now");
+        btnPay.setBackground(Color.BLACK);
         btnPay.setForeground(Color.WHITE);
-        btnPay.setPreferredSize(new Dimension(150, 40));
+        btnPay.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnPay.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        gbc.gridx = 0; gbc.gridy = 6; gbc.gridwidth = 2;
+        gbc.insets = new Insets(20, 10, 10, 10);
+        add(btnPay, gbc);
 
-        btnCancel = new JButton("Cancel");
-        btnCancel.setPreferredSize(new Dimension(100, 40));
+        // Footer
+        JLabel lblNote = new JLabel("Your payment is encrypted and secure.", SwingConstants.CENTER);
+        lblNote.setFont(new Font("Segoe UI", Font.ITALIC, 11));
+        lblNote.setForeground(Color.GRAY);
+        gbc.gridy = 7;
+        add(lblNote, gbc);
 
-        footer.add(btnPay);
-        footer.add(btnCancel);
-        add(footer, BorderLayout.SOUTH);
-
-        // --- Event Handling ---
-        btnPay.addActionListener(e -> processPayment());
-
-        btnCancel.addActionListener(e -> {
-            parentDashboard.showPanel(new PlanPanel(parentDashboard, currentUser));
-        });
+        btnPay.addActionListener(e -> handlePayment());
     }
 
-    private void processPayment() {
-        String cardNumber = txtCardNumber.getText().trim();
+    private void handlePayment() {
+        String planIdStr = txtPlanId.getText().trim();
+        String cardNum = txtCardNumber.getText().trim();
+        String expiry = txtExpiry.getText().trim(); // নতুন ডাটা
+        String cvc = txtCVC.getText().trim();       // নতুন ডাটা
+        String method = (String) comboMethod.getSelectedItem();
 
-        // 1. Validate using your Utils class (Luhn Algorithm)
-        if (!Card_Checker.isValidCard(cardNumber)) {
-            JOptionPane.showMessageDialog(this, "Invalid Card Number! Please check again.",
-                    "Payment Failed", JOptionPane.ERROR_MESSAGE);
+        // ভ্যালিডেশন
+        if (planIdStr.isEmpty() || cardNum.isEmpty() || expiry.isEmpty() || cvc.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "All fields are required!", "Validation Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // 2. Here you would normally call PaymentDAO to save the transaction
-        // For now, we simulate success
-        JOptionPane.showMessageDialog(this, "Payment Successful! \nPlan Activated: " + selectedPlan.getPlanName());
+        try {
+            int planId = Integer.parseInt(planIdStr);
 
-        // 3. Return to Subscription view to see the new active plan
-        parentDashboard.showPanel(new SubscriptionPanel(currentUser));
+            // আপডেটেড PaymentService কল করা (৬টি প্যারামিটারসহ)
+            String response = paymentService.processNewSubscription(
+                    currentUser.getUserId(),
+                    planId,
+                    cardNum,
+                    expiry,
+                    cvc,
+                    method
+            );
+
+            if (response.startsWith("Payment Successful")) {
+                JOptionPane.showMessageDialog(this, response, "Success", JOptionPane.INFORMATION_MESSAGE);
+                parent.showPanel(new SubscriptionPanel(currentUser));
+            } else {
+                JOptionPane.showMessageDialog(this, response, "Payment Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Plan ID must be a number!", "Format Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

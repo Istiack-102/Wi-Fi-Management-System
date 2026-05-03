@@ -69,7 +69,9 @@ public class UserDAO {
         return null;
     }
     public User getUserFullProfile(int userId) {
-        String sql = "SELECT * FROM view_customer_dashboard WHERE user_id = ?";
+        // view_customer_dashboard এ যদি role_id না থাকে তবে সরাসরি users টেবিল থেকে নিতে হবে
+        String sql = "SELECT v.*, u.role_id FROM view_customer_dashboard v " +
+                "JOIN users u ON v.user_id = u.user_id WHERE v.user_id = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -79,12 +81,13 @@ public class UserDAO {
                 if (rs.next()) {
                     User user = new User();
                     user.setUserId(rs.getInt("user_id"));
-                    user.setUsername(rs.getString("username")); // ইউজারনেম সেট করা
+                    user.setUsername(rs.getString("username"));
                     user.setFullName(rs.getString("full_name"));
-
-                    // ভিউ থেকে ফোন নম্বর এবং অ্যাড্রেস নেওয়া
                     user.setPhone(rs.getString("phone"));
                     user.setAddress(rs.getString("installation_address"));
+
+                    // নিশ্চিত করুন যে সঠিক রোল আইডি সেট হচ্ছে
+                    user.setRoleId(rs.getInt("role_id"));
 
                     return user;
                 }
