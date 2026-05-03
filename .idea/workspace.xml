@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f6001344-6f99-458c-aef0-7e14e07b7d77" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/UserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/UserDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/PaymentPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/PaymentPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/UserDashboard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/UserDashboard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/service/PaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/service/PaymentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/utils/Card_Checker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/utils/Card_Checker.java" afterDir="false" />
-    </list>
+    <list default="true" id="f6001344-6f99-458c-aef0-7e14e07b7d77" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
