@@ -2,6 +2,7 @@ package com.wifi.management.service;
 
 import com.wifi.management.database_operation.PaymentDAO;
 import com.wifi.management.database_operation.PlanDAO;
+import com.wifi.management.database_operation.UserDAO;
 import com.wifi.management.model.Payment;
 import com.wifi.management.model.Plan;
 import com.wifi.management.utils.Card_Checker;
@@ -21,6 +22,10 @@ public class PaymentService {
      * পেমেন্ট প্রসেস করার এবং সাবস্ক্রিপশন আপডেট করার মূল মেথড।
      */
     public String processNewSubscription(int userId, int planId, String cardNum, String expiryDate, String cvc, String method) {
+        UserDAO userDAO = new UserDAO();
+        if (!userDAO.isExistingCustomer(userId)) {
+            return "Error: No registered device (MAC Address) found for this user. Payment denied.";
+        }
 
         // ১. প্ল্যান ভ্যালিডেশন (ডাটাবেস থেকে সঠিক প্ল্যান খুঁজে বের করা)
         Plan selectedPlan = planDAO.getPlanById(planId);
