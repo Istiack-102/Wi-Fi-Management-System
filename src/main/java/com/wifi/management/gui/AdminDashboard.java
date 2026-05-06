@@ -208,14 +208,27 @@ public class AdminDashboard extends JFrame {
 
     private void processRequest(JTable table, boolean approve) {
         int row = table.getSelectedRow();
-        if (row == -1) return;
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a request first.");
+            return;
+        }
 
         int id = (int) table.getValueAt(row, 0);
-        boolean success = approve ? requestService.approveRequest(id) : requestService.rejectRequest(id);
+        boolean success;
+
+        if (approve) {
+            // This now triggers the MAC generation automatically inside the service
+            success = requestService.approveRequest(id);
+        } else {
+            success = requestService.rejectRequest(id);
+        }
 
         if (success) {
-            JOptionPane.showMessageDialog(this, "Request processed successfully.");
-            showConnectionRequests();
+            String msg = approve ? "Request Approved and MAC Assigned!" : "Request Rejected.";
+            JOptionPane.showMessageDialog(this, msg);
+            showConnectionRequests(); // Refresh the table
+        } else {
+            JOptionPane.showMessageDialog(this, "Operation failed. Check database connection.");
         }
     }
 

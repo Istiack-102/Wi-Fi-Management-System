@@ -99,9 +99,11 @@ public class UserDashboard extends JFrame {
         // ================= ACTIONS =================
         btnProfile.addActionListener(e -> showPanel(new CustomerPanel(currentUser)));
 
+        // PlanPanel-এ 'this' (Dashboard) পাঠানো হচ্ছে
         btnPlans.addActionListener(e -> showPanel(new PlanPanel(this, currentUser)));
 
-        btnPayment.addActionListener(e -> showPanel(new PaymentPanel(this, currentUser)));
+        // নরমাল পেমেন্ট বাটনে ক্লিক করলে ডিফল্ট (0 আইডি) পেমেন্ট প্যানেল খুলবে
+        btnPayment.addActionListener(e -> showPanel(new PaymentPanel(this, currentUser, 0, 0.0)));
 
         btnStatus.addActionListener(e -> showPanel(new SubscriptionPanel(currentUser)));
 
@@ -151,6 +153,16 @@ public class UserDashboard extends JFrame {
         contentPanel.add(panel, BorderLayout.CENTER);
         contentPanel.repaint();
         contentPanel.revalidate();
+    }
+
+    // ================= NEW: LOAD PAYMENT FROM PLAN =================
+    /**
+     * এই মেথডটি PlanPanel থেকে কল করা হবে যখন ইউজার "Buy Now" ক্লিক করবে।
+     */
+    public void loadPaymentPanel(int planId, double amount) {
+        // নতুন পেমেন্ট প্যানেল তৈরি করে সরাসরি কন্টেন্টে সেট করা
+        PaymentPanel payment = new PaymentPanel(this, this.currentUser, planId, amount);
+        showPanel(payment);
     }
 
     // ================= BUTTON STYLE =================
