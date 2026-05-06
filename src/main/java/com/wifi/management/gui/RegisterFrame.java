@@ -87,23 +87,23 @@ public class RegisterFrame extends JFrame {
         String username = txtUsername.getText().trim();
         String password = new String(txtPassword.getPassword());
 
-        // Basic Empty Check
-        if (username.isEmpty() || password.isEmpty() || phone.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please fill in all mandatory fields!");
+        // Basic Empty Check - এখানে fullName ও চেক করা উচিত
+        if (username.isEmpty() || password.isEmpty() || phone.isEmpty() || fullName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill in all mandatory fields including Full Name!");
             return;
         }
 
         // 2. Create Model Object
         User newUser = new User();
         newUser.setUsername(username);
+        newUser.setFullName(fullName); // 🔥 এই লাইনটি মিসিং ছিল, এটি যোগ করা হয়েছে
         newUser.setPhone(phone);
         newUser.setAddress(address);
-        // FullName can be added to your model if not there yet
 
         // Default role for new signups is 'Customer' (ID: 2)
         newUser.setRoleId(2);
 
-        // 3. Call Service Layer (Handles BD Number, Password Strength, and Hashing)
+        // 3. Call Service Layer
         String result = userService.registerNewCustomer(newUser, password);
 
         if (result.equals("Registration Successful")) {
@@ -111,7 +111,6 @@ public class RegisterFrame extends JFrame {
             this.dispose();
             new LoginFrame().setVisible(true);
         } else {
-            // Show the specific error (e.g., "Invalid BD Number" or "Weak Password")
             JOptionPane.showMessageDialog(this, result, "Registration Error", JOptionPane.WARNING_MESSAGE);
         }
     }

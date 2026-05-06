@@ -59,42 +59,42 @@ public class PlanDAO {
         }
         return null;
     }
+    public boolean updatePlan(Plan plan) {
+        // ১. বেসিক ভ্যালিডেশন: প্ল্যান অবজেক্ট বা আইডি ইনভ্যালিড হলে আগেই রিটার্ন করবে
+        if (plan == null || plan.getPlanId() <= 0) {
+            System.err.println("Update failed: Invalid Plan object or ID.");
+            return false;
+        }
 
-    // ================= OLD METHOD (KEEP) =================
-    public boolean updatePlanPrice(int planId, double newPrice) {
-        String sql = "UPDATE plans SET monthly_price = ? WHERE plan_id = ?";
+        // SQL কোয়েরি
+        String sql = "UPDATE plans SET plan_name = ?, speed_limit_mbps = ?, monthly_price = ? WHERE plan_id = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setDouble(1, newPrice);
-            pstmt.setInt(2, planId);
+            // ২. প্যারামিটার সেট করা
+            pstmt.setString(1, plan.getPlanName());
+            pstmt.setInt(2, plan.getSpeedLimitMbps());
+            pstmt.setDouble(3, plan.getMonthlyPrice());
+            pstmt.setInt(4, plan.getPlanId());
 
-            return pstmt.executeUpdate() > 0;
+            // ৩. এক্সেকিউশন
+            int rowsUpdated = pstmt.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                System.out.println("Plan ID " + plan.getPlanId() + " updated successfully.");
+                return true;
+            } else {
+                System.err.println("Update failed: No plan found with ID " + plan.getPlanId());
+                return false;
+            }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            // ৪. ডিটেইলড এরর হ্যান্ডলিং
+            System.err.println("Database Error during plan update: " + e.getMessage());
+            // প্রোডাকশন লেভেলে e.printStackTrace() এর বদলে Logger ব্যবহার করা ভালো
             return false;
         }
     }
 
-    // ================= 🔥 NEW METHOD (MAIN UPDATE) =================
-    public boolean updatePlan(int planId, int newSpeed, double newPrice) {
-
-        String sql = "UPDATE plans SET speed_limit_mbps = ?, monthly_price = ? WHERE plan_id = ?";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, newSpeed);
-            pstmt.setDouble(2, newPrice);
-            pstmt.setInt(3, planId);
-
-            return pstmt.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 }

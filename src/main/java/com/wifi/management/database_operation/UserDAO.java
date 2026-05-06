@@ -200,4 +200,64 @@ public class UserDAO {
 
         return false;
     }
+    // ================= VIEW ALL CUSTOMERS =================
+    public List<User> getAllCustomers() {
+        List<User> customers = new ArrayList<>();
+        // SQL কোয়েরিতে স্পষ্ট কলামের নাম উল্লেখ করা ভালো প্র্যাকটিস
+        String sql = "SELECT v.user_id, v.username, v.full_name, v.phone, v.installation_address, u.role_id " +
+                "FROM view_customer_dashboard v " +
+                "JOIN users u ON v.user_id = u.user_id " +
+                "WHERE u.role_id = 2";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                User user = new User();
+
+                // ডাটা সেট করার সময় নাল চেক এবং ট্রিম করা হয়েছে
+                user.setUserId(rs.getInt("user_id"));
+                user.setUsername(rs.getString("username"));
+
+                // Full Name যদি ডাটাবেসে না থাকে তবে "N/A" দেখাবে
+                String fullName = rs.getString("full_name");
+                user.setFullName(fullName != null ? fullName.trim() : "N/A");
+
+                String phone = rs.getString("phone");
+                user.setPhone(phone != null ? phone.trim() : "N/A");
+
+                String address = rs.getString("installation_address");
+                user.setAddress(address != null ? address.trim() : "N/A");
+
+                user.setRoleId(rs.getInt("role_id"));
+
+                customers.add(user);
+            }
+
+        } catch (SQLException e) {
+            // এরর মেসেজ আরও বিস্তারিতভাবে প্রিন্ট হবে
+            System.err.println("CRITICAL ERROR: Failed to fetch customers from database.");
+            e.printStackTrace();
+        }
+
+        return customers;
+    }
+
+    // ================= COUNT TOTAL CUSTOMERS =================
+    public int getTotalCustomerCount() {
+        // role_id = 2 সাধারণত কাস্টমারদের জন্য ব্যবহার করা হয় আপনার registerUser মেথড অনুযায়ী
+        String sql = "SELECT COUNT(*) FROM users WHERE role_id = 2";
+
+        try (Connection conn = DBConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error counting customers: " + e.getMessage());
+        }
+        return 0;
+    }
 }

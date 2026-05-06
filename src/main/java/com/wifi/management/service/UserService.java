@@ -24,7 +24,6 @@ public class UserService {
 
     // ================= REGISTER USER =================
     public String registerNewCustomer(User user, String plainPassword) {
-
         if (!BD_Number_check.isValidBDNumber(user.getPhone())) {
             return "Invalid Bangladeshi phone number!";
         }
@@ -56,8 +55,20 @@ public class UserService {
         return userDAO.isExistingCustomer(userId);
     }
 
-    // ================= 🔥 NEW: MULTI USER SEARCH =================
+    // ================= MULTI USER SEARCH =================
     public List<User> searchUsers(String keyword) {
         return userDAO.searchUsers(keyword);
+    }
+
+    // ================= 🔥 UPDATED: VIEW ALL CUSTOMERS =================
+    public List<User> getAllCustomers() {
+        // Stream API ব্যবহার করে ফিল্টার করার প্রয়োজন নেই,
+        // কারণ DAO লেভেলে SQL কোয়েরি দিয়েই আমরা কাস্টমারদের ডাটা নিয়ে আসছি।
+        return userDAO.getAllCustomers();
+    }
+
+    // ================= 🔥 NEW: TOTAL CUSTOMER COUNT =================
+    public int getTotalCustomers() {
+        return userDAO.getTotalCustomerCount();
     }
 }
