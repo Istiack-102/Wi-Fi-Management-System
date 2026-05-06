@@ -9,25 +9,30 @@ public class PlanService {
 
     private PlanDAO planDAO;
 
-    public boolean updatePlan(int planId, int speed, double price) {
-        return planDAO.updatePlan(planId, speed, price);
-    }
-
     public PlanService() {
         this.planDAO = new PlanDAO();
     }
 
-    // Fetches all plans from the DAO for display
+    // সংশোধিত মেথড
+    public boolean updatePlan(int planId, String name, int speed, double price) {
+        Plan plan = new Plan();
+        plan.setPlanId(planId);
+        plan.setPlanName(name);
+        plan.setSpeedLimitMbps(speed);
+        plan.setMonthlyPrice(price);
+
+        // DAO মেথডটি এখন সঠিক আর্গুমেন্ট পাবে
+        return planDAO.updatePlan(plan);
+    }
+
     public List<Plan> getAvailablePlans() {
         return planDAO.getAllPlans();
     }
 
-    // Returns a specific plan's details by its ID
     public Plan getPlanDetails(int planId) {
         return planDAO.getPlanById(planId);
     }
 
-    // Filters plans to show only those within a specific speed range
     public List<Plan> getPlansByMinSpeed(int minMbps) {
         List<Plan> allPlans = planDAO.getAllPlans();
         return allPlans.stream()
@@ -35,7 +40,6 @@ public class PlanService {
                 .collect(Collectors.toList());
     }
 
-    // Business Logic: Formats plan details for a clean GUI display
     public String getFormattedPlanInfo(Plan plan) {
         if (plan == null) return "Plan not found";
         return String.format("%s - %d Mbps at ৳%.2f/month",
