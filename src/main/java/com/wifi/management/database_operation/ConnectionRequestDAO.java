@@ -9,7 +9,6 @@ import java.util.List;
 
 public class ConnectionRequestDAO {
 
-    // ================= INSERT REQUEST =================
     public boolean insertRequest(int userId, int planId) {
 
         String sql = "INSERT INTO connection_requests (user_id, plan_id) VALUES (?, ?)";
@@ -29,7 +28,6 @@ public class ConnectionRequestDAO {
         return false;
     }
 
-    // ================= GET STATUS =================
     public String getRequestStatusByUser(int userId) {
 
         String sql = "SELECT status FROM connection_requests " +
@@ -52,7 +50,6 @@ public class ConnectionRequestDAO {
         return null;
     }
 
-    // ================= GET ALL PENDING =================
     public List<ConnectionRequest> getAllPendingRequests() {
 
         List<ConnectionRequest> list = new ArrayList<>();
@@ -82,7 +79,6 @@ public class ConnectionRequestDAO {
         return list;
     }
 
-    // ================= UPDATE STATUS =================
     public boolean updateRequestStatus(int requestId, String status) {
 
         String sql = "UPDATE connection_requests SET status = ? WHERE request_id = ?";
@@ -99,6 +95,68 @@ public class ConnectionRequestDAO {
             e.printStackTrace();
         }
 
+        return false;
+    }
+    public boolean approveRequestWithMac(int requestId, String macAddress) {
+        String sqlUpdateReq = "UPDATE connection_requests SET status = 'accepted', mac_address = ? WHERE request_id = ?";
+
+        // ২. customer_details টেবিলে MAC আপডেট (রিকোয়েস্ট আইডির মাধ্যমে ইউজার খুঁজে)
+        String sqlUpdateCustomer = "UPDATE customer_details SET mac_address = ? " +
+                "WHERE user_id = (SELECT user_id FROM connection_requests WHERE request_id = ?)";
+
+        Connection conn = null;
+        try {
+            conn = DBConnection.getConnection();
+            if (conn == null) return false;
+
+            conn.setAutoCommit(false); // Transaction শুরু
+
+            boolean reqUpdated = false;
+            boolean customerUpdated = false;
+
+            try (PreparedStatement ps1 = conn.prepareStatement(sqlUpdateReq)) {
+                ps1.setString(1, macAddress);
+                ps1.setInt(2, requestId);
+                int rowsAffected = ps1.executeUpdate();
+                if (rowsAffected > 0) reqUpdated = true;
+            }
+
+            try (PreparedStatement ps2 = conn.prepareStatement(sqlUpdateCustomer)) {
+                ps2.setString(1, macAddress);
+                ps2.setInt(2, requestId);
+                int rowsAffected = ps2.executeUpdate();
+
+                if (rowsAffected > 0) customerUpdated = true;
+            }
+
+            if (reqUpdated && customerUpdated) {
+                conn.commit();
+                return true;
+            } else {
+                conn.rollback();
+                System.err.println("Transaction failed: One or more tables were not updated.");
+            }
+
+        } catch (SQLException e) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                    System.err.println("Transaction rolled back due to error.");
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            e.printStackTrace();
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         return false;
     }
 }

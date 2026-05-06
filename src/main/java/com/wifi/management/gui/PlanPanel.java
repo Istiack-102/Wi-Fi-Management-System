@@ -40,7 +40,7 @@ public class PlanPanel extends JPanel {
         DefaultTableModel model = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 4;
+                return column == 4; // শুধুমাত্র অ্যাকশন কলামটি এডিটেবল (বাটনের জন্য)
             }
         };
 
@@ -59,9 +59,10 @@ public class PlanPanel extends JPanel {
         JTable table = new JTable(model);
         table.setRowHeight(50);
         table.setFont(new Font("Segoe UI", Font.PLAIN, 15));
-        table.setGridColor(new Color(200, 200, 200));
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setGridColor(new Color(230, 230, 230));
 
-        // --- হেডার কালার: Black Background, White Text ---
+        // --- হেডার ডিজাইন ---
         JTableHeader header = table.getTableHeader();
         header.setPreferredSize(new Dimension(100, 45));
         header.setBackground(Color.BLACK);
@@ -71,26 +72,28 @@ public class PlanPanel extends JPanel {
 
         // রেন্ডারার এবং এডিটর সেট করা
         table.getColumnModel().getColumn(4).setCellRenderer(new ButtonRenderer());
-        table.getColumnModel().getColumn(4).setCellEditor(new ButtonEditor(new JCheckBox(), table, userService, user));
+        table.getColumnModel().getColumn(4).setCellEditor(new ButtonEditor(new JCheckBox(), table, userService, user, parent));
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 50, 30, 50));
+        scrollPane.getViewport().setBackground(Color.WHITE);
         add(scrollPane, BorderLayout.CENTER);
 
-        JLabel lblFooter = new JLabel("Note: You must have an active connection to purchase.");
+        JLabel lblFooter = new JLabel("Note: Your account must be verified by an admin before purchase.");
         lblFooter.setHorizontalAlignment(SwingConstants.CENTER);
         lblFooter.setFont(new Font("Segoe UI", Font.ITALIC, 13));
         lblFooter.setBorder(BorderFactory.createEmptyBorder(10, 0, 15, 0));
         add(lblFooter, BorderLayout.SOUTH);
     }
 
+    // --- বাটন দেখানোর জন্য রেন্ডারার ---
     class ButtonRenderer extends JButton implements TableCellRenderer {
         public ButtonRenderer() {
             setOpaque(true);
             setBackground(Color.BLACK);
             setForeground(Color.WHITE);
             setFont(new Font("Segoe UI", Font.BOLD, 14));
-            setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 1));
+            setFocusPainted(false);
         }
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -99,17 +102,20 @@ public class PlanPanel extends JPanel {
         }
     }
 
+    // --- বাটনে ক্লিক করলে অ্যাকশন হ্যান্ডেল করার জন্য এডিটর ---
     class ButtonEditor extends DefaultCellEditor {
         protected JButton button;
         private JTable table;
         private UserService userService;
         private User currentUser;
+        private UserDashboard dashboard;
 
-        public ButtonEditor(JCheckBox checkBox, JTable table, UserService userService, User user) {
+        public ButtonEditor(JCheckBox checkBox, JTable table, UserService userService, User user, UserDashboard dashboard) {
             super(checkBox);
             this.table = table;
             this.userService = userService;
             this.currentUser = user;
+            this.dashboard = dashboard;
 
             button = new JButton("Buy Now");
             button.setOpaque(true);
@@ -131,12 +137,24 @@ public class PlanPanel extends JPanel {
                 int planId = (int) table.getValueAt(row, 0);
                 String planName = table.getValueAt(row, 1).toString();
 
+                // প্রাইস স্ট্রিং থেকে নম্বর বের করা (e.g., "500.0 BDT" -> 500.0)
+                String priceText = table.getValueAt(row, 3).toString().replace(" BDT", "");
+                double price = Double.parseDouble(priceText);
+
+                // ১. ভেরিফিকেশন চেক
                 if (!userService.isVerifiedCustomer(currentUser.getUserId())) {
-                    JOptionPane.showMessageDialog(button, "Verification failed! Contact admin for MAC setup.", "New Customer", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(button,
+                            "Your account is not verified! Please contact admin for MAC setup.",
+                            "Verification Required", JOptionPane.WARNING_MESSAGE);
                 } else {
-                    int confirm = JOptionPane.showConfirmDialog(button, "Subscribe to " + planName + "?", "Confirmation", JOptionPane.YES_NO_OPTION);
+                    // ২. কনফার্মেশন এবং পেমেন্ট প্যানেলে পাঠানো
+                    int confirm = JOptionPane.showConfirmDialog(button,
+                            "Selected Plan: " + planName + "\nPrice: " + price + " BDT\n\nDo you want to proceed to payment?",
+                            "Confirm Plan Selection", JOptionPane.YES_NO_OPTION);
+
                     if (confirm == JOptionPane.YES_OPTION) {
-                        JOptionPane.showMessageDialog(button, "Successfully Subscribed!");
+                        // ড্যাশবোর্ডের মাধ্যমে পেমেন্ট প্যানেল লোড করা
+                        dashboard.loadPaymentPanel(planId, price);
                     }
                 }
             }
