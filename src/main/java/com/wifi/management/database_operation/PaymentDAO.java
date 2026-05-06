@@ -13,9 +13,7 @@ public class PaymentDAO {
         if (conn == null) return false;
 
         try {
-            conn.setAutoCommit(false); // ট্রানজেকশন শুরু
-
-            // ১. Transactions টেবিলে পেমেন্ট ডাটা ইনসার্ট করা
+            conn.setAutoCommit(false);
             String insertPaymentSQL = "INSERT INTO transactions (transaction_id, user_id, amount, payment_method) VALUES (?, ?, ?, ?)";
             try (PreparedStatement pstmtPayment = conn.prepareStatement(insertPaymentSQL)) {
                 pstmtPayment.setString(1, payment.getTransactionId()); // Index 1
@@ -25,8 +23,7 @@ public class PaymentDAO {
                 pstmtPayment.executeUpdate();
             }
 
-            // ২. Subscriptions টেবিল আপডেট বা ইনসার্ট করা (Upsert লজিক)
-            // এটি চেক করবে ইউজারের সাবস্ক্রিপশন আছে কি না, না থাকলে নতুন তৈরি করবে
+
             String upsertSubscriptionSQL = "INSERT INTO subscriptions (user_id, plan_id, expiry_date, status) " +
                     "VALUES (?, ?, DATE_ADD(CURDATE(), INTERVAL 30 DAY), 'active') " +
                     "ON DUPLICATE KEY UPDATE " +
@@ -35,8 +32,8 @@ public class PaymentDAO {
                     "status = 'active'";
 
             try (PreparedStatement pstmtSub = conn.prepareStatement(upsertSubscriptionSQL)) {
-                pstmtSub.setInt(1, payment.getUserId()); // প্রথম '?' এর জন্য user_id (Index 1)
-                pstmtSub.setInt(2, planId);              // দ্বিতীয় '?' এর জন্য plan_id (Index 2)
+                pstmtSub.setInt(1, payment.getUserId());
+                pstmtSub.setInt(2, planId);
 
                 int rowsAffected = pstmtSub.executeUpdate();
                 if (rowsAffected == 0) {
@@ -44,12 +41,12 @@ public class PaymentDAO {
                 }
             }
 
-            conn.commit(); // সব কাজ সফল হলে সেভ হবে
+            conn.commit();
             return true;
 
         } catch (SQLException e) {
             try {
-                if (conn != null) conn.rollback(); // এরর হলে আগের অবস্থায় ফিরে যাবে
+                if (conn != null) conn.rollback();
             } catch (SQLException rollbackEx) {
                 rollbackEx.printStackTrace();
             }

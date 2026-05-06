@@ -22,7 +22,6 @@ public class AdminDashboard extends JFrame {
     private PlanDAO planDAO;
     private ConnectionRequestService requestService;
 
-    // আধুনিক কালার স্কিম
     private final Color SIDEBAR_COLOR = new Color(44, 62, 80);
     private final Color ACCENT_COLOR = new Color(52, 152, 219);
     private final Color SUCCESS_COLOR = new Color(46, 204, 113);
@@ -42,13 +41,10 @@ public class AdminDashboard extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Sidebar Setup
         add(createSidebar(), BorderLayout.WEST);
 
-        // Top Bar Setup
         add(createTopBar(), BorderLayout.NORTH);
 
-        // Main Content Area
         mainContent = new JPanel(new BorderLayout());
         mainContent.setBackground(Color.WHITE);
         mainContent.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -63,37 +59,30 @@ public class AdminDashboard extends JFrame {
         sidebar.setPreferredSize(new Dimension(250, 0));
         sidebar.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 10));
 
-        // Dashboard Title
         JLabel lblTitle = new JLabel("ADMIN DASHBOARD");
         lblTitle.setForeground(Color.WHITE);
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
         lblTitle.setBorder(BorderFactory.createEmptyBorder(20, 0, 30, 0));
         sidebar.add(lblTitle);
 
-        // ১. Manage Users (Welcome Screen বা Search)
         JButton btnUsers = createSidebarButton("Manage Users");
         btnUsers.addActionListener(e -> showWelcome());
         sidebar.add(btnUsers);
 
-        // ২. 🔥 NEW: View All Customers (নতুন যোগ করা হয়েছে)
         JButton btnAllCustomers = createSidebarButton("View All Customers");
         btnAllCustomers.addActionListener(e -> showAllCustomers());
         sidebar.add(btnAllCustomers);
 
-        // ৩. Plan Management
         JButton btnPlans = createSidebarButton("Plan Management");
         btnPlans.addActionListener(e -> showPlanEditor());
         sidebar.add(btnPlans);
 
-        // ৪. Active Requests
         JButton btnRequests = createSidebarButton("Active Requests");
         btnRequests.addActionListener(e -> showConnectionRequests());
         sidebar.add(btnRequests);
 
-        // Spacer (Logout বাটনকে নিচে পাঠানোর জন্য)
         sidebar.add(Box.createVerticalStrut(150));
 
-        // ৫. Logout System
         JButton btnLogout = createSidebarButton("Logout System");
         btnLogout.setBackground(DANGER_COLOR);
         btnLogout.addActionListener(e -> {
@@ -217,7 +206,6 @@ public class AdminDashboard extends JFrame {
         boolean success;
 
         if (approve) {
-            // This now triggers the MAC generation automatically inside the service
             success = requestService.approveRequest(id);
         } else {
             success = requestService.rejectRequest(id);
@@ -247,18 +235,15 @@ public class AdminDashboard extends JFrame {
         updateMainContent(new JScrollPane(table), null, "User Search Results: " + keyword);
     }
     private void showAllCustomers() {
-        // ১. UserService থেকে ডাটা সংগ্রহ করা
         List<User> customers = userService.getAllCustomers();
         int totalCount = userService.getTotalCustomers();
 
-        // ২. টেবিল কলাম সেট করা
         String[] cols = {"User ID", "Username", "Full Name", "Phone", "Address"};
         DefaultTableModel model = new DefaultTableModel(cols, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
         };
 
-        // ৩. ইউজারের লিস্ট থেকে রো (Row) তৈরি করা
         for (User u : customers) {
             model.addRow(new Object[]{
                     u.getUserId(),
@@ -269,12 +254,10 @@ public class AdminDashboard extends JFrame {
             });
         }
 
-        // ৪. টেবিল ডিজাইন ও স্ক্রল প্যান
         JTable table = new JTable(model);
-        applyTableStyle(table); // নিশ্চিত করুন আপনার ক্লাসে এই মেথডটি আছে
+        applyTableStyle(table);
         JScrollPane scrollPane = new JScrollPane(table);
 
-        // ৫. Footer Panel: যেখানে মোট কাস্টমার সংখ্যা দেখানো হবে
         JPanel footerPanel = new JPanel(new BorderLayout());
         footerPanel.setOpaque(false);
         footerPanel.setBorder(BorderFactory.createEmptyBorder(15, 5, 0, 5));
@@ -285,27 +268,23 @@ public class AdminDashboard extends JFrame {
 
         footerPanel.add(lblTotal, BorderLayout.WEST);
 
-        // ৬. updateView এর মাধ্যমে মেইন কন্টেন্টে দেখানো
         updateView(scrollPane, footerPanel, "Customer Management Directory");
     }
     private void applyTableStyle(JTable table) {
-        // ১. টেবিলের ফন্ট এবং রো হাইট সেট করা
         table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         table.setRowHeight(35);
-        table.setSelectionBackground(new Color(52, 152, 219)); // সিলেকশন কালার (Light Blue)
+        table.setSelectionBackground(new Color(52, 152, 219));
         table.setSelectionForeground(Color.WHITE);
         table.setShowGrid(true);
         table.setGridColor(new Color(230, 230, 230));
 
-        // ২. টেবিল হেডার ডিজাইন করা
         JTableHeader header = table.getTableHeader();
-        header.setBackground(new Color(44, 62, 80)); // হেডার ব্যাকগ্রাউন্ড (Dark Blue/Gray)
+        header.setBackground(new Color(44, 62, 80));
         header.setForeground(Color.WHITE);
         header.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        header.setReorderingAllowed(false); // কলাম ড্র্যাগ করে সরানো বন্ধ
+        header.setReorderingAllowed(false);
         header.setPreferredSize(new Dimension(0, 40));
 
-        // ৩. সেন্ট্রাল অ্যালাইনমেন্ট (ঐচ্ছিক: সব টেক্সট মাঝে দেখাবে)
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         for (int i = 0; i < table.getColumnCount(); i++) {
@@ -313,28 +292,24 @@ public class AdminDashboard extends JFrame {
         }
     }
     private void updateView(Component content, Component footer, String title) {
-        // ১. আগের সব কন্টেন্ট মুছে ফেলা
+
         mainContent.removeAll();
 
-        // ২. নতুন টাইটেল সেট করা
         JLabel lblTitle = new JLabel(title);
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
         lblTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
 
-        // ৩. লেআউট অনুযায়ী কম্পোনেন্টগুলো যোগ করা
-        mainContent.add(lblTitle, BorderLayout.NORTH); // উপরে টাইটেল
-        mainContent.add(content, BorderLayout.CENTER); // মাঝখানে টেবিল বা স্ক্রল প্যান
+        mainContent.add(lblTitle, BorderLayout.NORTH);
+        mainContent.add(content, BorderLayout.CENTER);
 
         if (footer != null) {
-            mainContent.add(footer, BorderLayout.SOUTH); // নিচে ফুটার (যেমন: টোটাল কাউন্ট)
+            mainContent.add(footer, BorderLayout.SOUTH);
         }
 
-        // ৪. ইন্টারফেস রিফ্রেশ করা
         mainContent.revalidate();
         mainContent.repaint();
     }
 
-    // Helper: UI Styling & Updates
     private void updateMainContent(Component comp, Component actions, String title) {
         mainContent.removeAll();
         JLabel lblTitle = new JLabel(title);

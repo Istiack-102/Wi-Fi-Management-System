@@ -77,34 +77,34 @@ public class UserDAO {
 
     // ================= FULL PROFILE =================
     public User getUserFullProfile(int userId) {
-
-        String sql = "SELECT v.*, u.role_id FROM view_customer_dashboard v " +
-                "JOIN users u ON v.user_id = u.user_id WHERE v.user_id = ?";
+        // এখানে view_customer_dashboard ব্যবহার করা হয়েছে যা আপনি আগে তৈরি করেছিলেন
+        String sql = "SELECT * FROM view_customer_dashboard WHERE user_id = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, userId);
-
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
                 User user = new User();
-
                 user.setUserId(rs.getInt("user_id"));
                 user.setUsername(rs.getString("username"));
                 user.setFullName(rs.getString("full_name"));
                 user.setPhone(rs.getString("phone"));
                 user.setAddress(rs.getString("installation_address"));
-                user.setRoleId(rs.getInt("role_id"));
+                // getUserFullProfile মেথডের rs.next() ব্লকের ভেতরে এগুলো যোগ করুন:
+                user.setSpeed(rs.getInt("speed_limit_mbps"));
+                user.setPrice(rs.getDouble("monthly_price"));
+                // সাবস্ক্রিপশন ডাটা
+                user.setPlanName(rs.getString("plan_name"));
+                user.setExpiryDate(rs.getDate("expiry_date"));
 
                 return user;
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 

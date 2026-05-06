@@ -1,120 +1,74 @@
 package com.wifi.management.gui;
 
 import com.wifi.management.model.User;
-import com.wifi.management.service.SubscriptionService;
-
 import javax.swing.*;
 import java.awt.*;
 
 public class SubscriptionPanel extends JPanel {
 
-    private User currentUser;
-    private SubscriptionService subService;
-
     public SubscriptionPanel(User user) {
-        this.currentUser = user;
-        this.subService = new SubscriptionService();
-        prepareGUI();
-    }
-
-    private void prepareGUI() {
-
-        setLayout(new BorderLayout(20, 20));
+        setLayout(new BorderLayout());
         setBackground(new Color(241, 242, 246));
-        setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
+        setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
 
-        // ================= GET STATUS =================
-        String status = subService.getSubscriptionStatus(currentUser.getUserId());
+        // --- Title Section ---
+        JLabel lblTitle = new JLabel("Your Subscription Details");
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 26));
+        lblTitle.setForeground(new Color(44, 62, 80));
+        add(lblTitle, BorderLayout.NORTH);
 
-        // ================= TOP SECTION =================
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        topPanel.setOpaque(false);
-
-        JLabel lblHeader = new JLabel("Current Subscription Status: ");
-        lblHeader.setFont(new Font("Arial", Font.BOLD, 18));
-
-        JLabel lblStatus = new JLabel();
-
-        if (status == null) {
-            lblStatus.setText(" NO SUBSCRIPTION ");
-            lblStatus.setBackground(Color.GRAY);
-        }
-        else if (status.equals("pending")) {
-            lblStatus.setText(" PENDING ");
-            lblStatus.setBackground(new Color(241, 196, 15));
-        }
-        else if (status.equals("rejected")) {
-            lblStatus.setText(" REJECTED ");
-            lblStatus.setBackground(new Color(231, 76, 60));
-        }
-        else {
-            lblStatus.setText(" ACTIVE ");
-            lblStatus.setBackground(new Color(46, 204, 113));
-        }
-
-        lblStatus.setOpaque(true);
-        lblStatus.setForeground(Color.WHITE);
-        lblStatus.setFont(new Font("Arial", Font.BOLD, 14));
-
-        topPanel.add(lblHeader);
-        topPanel.add(lblStatus);
-
-        add(topPanel, BorderLayout.NORTH);
-
-        // ================= CENTER SECTION =================
-        JPanel detailsCard = new JPanel();
-        detailsCard.setLayout(new GridLayout(4, 2, 10, 20));
-        detailsCard.setBackground(Color.WHITE);
-        detailsCard.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(200, 200, 200)),
+        // --- Info Card Section ---
+        JPanel card = new JPanel(new GridLayout(5, 2, 10, 20));
+        card.setBackground(Color.WHITE);
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(224, 224, 224), 1),
                 BorderFactory.createEmptyBorder(30, 30, 30, 30)
         ));
 
-        if (status != null && status.equals("accepted")) {
+        // Helper to add data rows
+        // SubscriptionPanel-এর ভেতর কার্ড সেকশনটি এভাবে আপডেট করুন:
+        addDataRow(card, "Current Plan:", user.getPlanName() != null ? user.getPlanName() : "No Active Plan");
 
-            // REAL DATA FROM SERVICE
-            addDetailRow(detailsCard, "Plan Name:", subService.getPlanName(currentUser.getUserId()));
-            addDetailRow(detailsCard, "Monthly Cost:", subService.getPrice(currentUser.getUserId()));
-            addDetailRow(detailsCard, "Activation Date:", subService.getStartDate(currentUser.getUserId()));
-            addDetailRow(detailsCard, "Expiry Date:", subService.getExpiryDate(currentUser.getUserId()));
+// ডাตาবেস থেকে স্পিড এবং প্রাইস দেখানো হচ্ছে
+        addDataRow(card, "Internet Speed:", user.getPlanName() != null ? user.getSpeed() + " Mbps" : "N/A");
 
-        } else {
+        addDataRow(card, "Monthly Bill:", user.getPlanName() != null ? "Tk. " + user.getPrice() : "N/A");
 
-            addDetailRow(detailsCard, "Message:", "No Active Subscription");
-            addDetailRow(detailsCard, "Action:", "Request Connection First");
-            addDetailRow(detailsCard, "Status Info:", (status == null ? "Not Requested" : status));
-            addDetailRow(detailsCard, "Hint:", "Wait for admin approval");
+        addDataRow(card, "Expiry Date:", user.getExpiryDate() != null ? user.getExpiryDate().toString() : "N/A");
+
+        // Status Logic
+        String statusText = "Inactive";
+        Color statusColor = Color.RED;
+        if (user.getExpiryDate() != null) {
+            java.util.Date today = new java.util.Date();
+            if (user.getExpiryDate().after(today)) {
+                statusText = "ACTIVE ✅";
+                statusColor = new Color(46, 204, 113);
+            } else {
+                statusText = "EXPIRED ❌";
+            }
         }
 
-        add(detailsCard, BorderLayout.CENTER);
+        JLabel lblStatusLabel = new JLabel("Account Status:");
+        lblStatusLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        JLabel lblStatusValue = new JLabel(statusText);
+        lblStatusValue.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        lblStatusValue.setForeground(statusColor);
 
-        // ================= BOTTOM SECTION =================
-        JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.setOpaque(false);
+        card.add(lblStatusLabel);
+        card.add(lblStatusValue);
 
-        JLabel lblDaysLeft = new JLabel("⏳ Days Remaining: --");
-        lblDaysLeft.setFont(new Font("Arial", Font.ITALIC, 16));
-        lblDaysLeft.setForeground(new Color(44, 62, 80));
-
-        JButton btnRenew = new JButton("Renew / Upgrade Plan");
-        btnRenew.setBackground(new Color(52, 152, 219));
-        btnRenew.setForeground(Color.WHITE);
-        btnRenew.setFocusPainted(false);
-
-        bottomPanel.add(lblDaysLeft, BorderLayout.WEST);
-        bottomPanel.add(btnRenew, BorderLayout.EAST);
-
-        add(bottomPanel, BorderLayout.SOUTH);
+        add(card, BorderLayout.CENTER);
     }
 
-    // ================= HELPER =================
-    private void addDetailRow(JPanel panel, String label, String value) {
-
+    private void addDataRow(JPanel panel, String label, String value) {
         JLabel lblKey = new JLabel(label);
-        lblKey.setFont(new Font("Arial", Font.BOLD, 14));
+        lblKey.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        lblKey.setForeground(Color.GRAY);
 
         JLabel lblValue = new JLabel(value);
-        lblValue.setFont(new Font("Arial", Font.PLAIN, 14));
+        lblValue.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        lblValue.setForeground(Color.BLACK);
 
         panel.add(lblKey);
         panel.add(lblValue);
