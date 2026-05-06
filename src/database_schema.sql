@@ -116,3 +116,4 @@ CREATE TABLE connection_requests (
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (plan_id) REFERENCES plans(plan_id)
 );
+ALTER TABLE subscriptions ADD CONSTRAINT UNIQUE (user_id);
