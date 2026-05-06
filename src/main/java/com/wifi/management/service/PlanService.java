@@ -9,6 +9,10 @@ public class PlanService {
 
     private PlanDAO planDAO;
 
+    public boolean updatePlan(int planId, int speed, double price) {
+        return planDAO.updatePlan(planId, speed, price);
+    }
+
     public PlanService() {
         this.planDAO = new PlanDAO();
     }

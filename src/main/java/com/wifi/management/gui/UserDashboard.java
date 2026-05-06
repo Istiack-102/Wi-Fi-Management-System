@@ -2,17 +2,27 @@ package com.wifi.management.gui;
 
 import com.wifi.management.model.User;
 import com.wifi.management.database_operation.UserDAO;
+import com.wifi.management.service.ConnectionRequestService;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class UserDashboard extends JFrame {
+
     private User currentUser;
     private JPanel contentPanel;
     private UserDAO userDAO;
+    private ConnectionRequestService requestService;
+
+    // NEW UI COMPONENTS
+    private JButton btnRequestConnection;
+    private JLabel lblRequestStatus;
 
     public UserDashboard(User loggedInUser) {
+
         this.userDAO = new UserDAO();
-        // ডাটাবেস থেকে ইউজারের লেটেস্ট তথ্য এবং অ্যাড্রেস/ফোন সংগ্রহ করা
+        this.requestService = new ConnectionRequestService();
+
         this.currentUser = userDAO.getUserFullProfile(loggedInUser.getUserId());
 
         if (this.currentUser == null) {
@@ -23,17 +33,18 @@ public class UserDashboard extends JFrame {
     }
 
     private void prepareGUI() {
+
         setTitle("WiFi Management - Customer Dashboard");
         setSize(1150, 750);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // --- SIDEBAR ---
+        // ================= SIDEBAR =================
         JPanel sidebar = new JPanel();
         sidebar.setBackground(new Color(44, 62, 80));
         sidebar.setPreferredSize(new Dimension(250, 750));
-        sidebar.setLayout(new GridLayout(10, 1, 0, 5));
+        sidebar.setLayout(new GridLayout(11, 1, 0, 5));
 
         JLabel lblBrand = new JLabel("  WIFI MANAGER", SwingConstants.LEFT);
         lblBrand.setForeground(new Color(52, 152, 219));
@@ -52,11 +63,17 @@ public class UserDashboard extends JFrame {
         sidebar.add(btnPlans);
         sidebar.add(btnPayment);
         sidebar.add(btnStatus);
+
+        // ================= NEW BUTTON =================
+        btnRequestConnection = createSidebarButton("📡 Request Connection");
+        sidebar.add(btnRequestConnection);
+
         sidebar.add(new JLabel(""));
         sidebar.add(btnLogout);
+
         add(sidebar, BorderLayout.WEST);
 
-        // --- HEADER ---
+        // ================= HEADER =================
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(Color.WHITE);
         header.setPreferredSize(new Dimension(900, 75));
@@ -66,36 +83,61 @@ public class UserDashboard extends JFrame {
         lblUser.setFont(new Font("Segoe UI", Font.BOLD, 18));
         header.add(lblUser, BorderLayout.WEST);
 
-        String phone = (currentUser.getPhone() != null) ? currentUser.getPhone() : "No Phone";
-        String address = (currentUser.getAddress() != null) ? currentUser.getAddress() : "No Address";
-        JLabel lblContact = new JLabel("📞 " + phone + "  |  📍 " + address + "   ");
-        lblContact.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        lblContact.setForeground(new Color(127, 140, 141));
-        header.add(lblContact, BorderLayout.EAST);
-
         add(header, BorderLayout.NORTH);
 
-        // --- CONTENT PANEL ---
+        // ================= CONTENT =================
         contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBackground(new Color(241, 242, 246));
         add(contentPanel, BorderLayout.CENTER);
 
-        // ডিফল্টভাবে প্রোফাইল দেখাবে
         showPanel(new CustomerPanel(currentUser));
 
-        // --- ACTION LISTENERS ---
+        // ================= STATUS LABEL =================
+        lblRequestStatus = new JLabel("Request Status: Not Requested");
+        lblRequestStatus.setFont(new Font("Segoe UI", Font.BOLD, 14));
+
+        // ================= ACTIONS =================
         btnProfile.addActionListener(e -> showPanel(new CustomerPanel(currentUser)));
 
-        // এখানে 'this' পাস করা জরুরি যাতে PlanPanel ড্যাশবোর্ডকে চিনতে পারে
         btnPlans.addActionListener(e -> showPanel(new PlanPanel(this, currentUser)));
 
-        // পেমেন্ট প্যানেল লোড করা
         btnPayment.addActionListener(e -> showPanel(new PaymentPanel(this, currentUser)));
 
         btnStatus.addActionListener(e -> showPanel(new SubscriptionPanel(currentUser)));
 
+        // ================= REQUEST CONNECTION LOGIC =================
+        btnRequestConnection.addActionListener(e -> {
+
+            String status = requestService.getStatus(currentUser.getUserId());
+
+            if (status == null) {
+
+                // Example planId (তুমি UI থেকে select করাবে later)
+                int planId = 1;
+
+                boolean result = requestService.requestConnection(currentUser.getUserId(), planId);
+
+                if (result) {
+                    lblRequestStatus.setText("Request Status: Pending");
+                    JOptionPane.showMessageDialog(this, "Connection Requested Successfully!");
+                }
+
+            } else if (status.equals("pending")) {
+                JOptionPane.showMessageDialog(this, "Already Pending!");
+            } else if (status.equals("accepted")) {
+                JOptionPane.showMessageDialog(this, "Already Approved ✅");
+            } else {
+                JOptionPane.showMessageDialog(this, "Rejected. You can request again.");
+            }
+        });
+
+        // ================= LOGOUT =================
         btnLogout.addActionListener(e -> {
-            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to logout?", "Logout", JOptionPane.YES_NO_OPTION);
+            int confirm = JOptionPane.showConfirmDialog(this,
+                    "Are you sure you want to logout?",
+                    "Logout",
+                    JOptionPane.YES_NO_OPTION);
+
             if (confirm == JOptionPane.YES_OPTION) {
                 this.dispose();
                 new LoginFrame().setVisible(true);
@@ -103,6 +145,7 @@ public class UserDashboard extends JFrame {
         });
     }
 
+    // ================= PANEL SWITCH =================
     public void showPanel(JPanel panel) {
         contentPanel.removeAll();
         contentPanel.add(panel, BorderLayout.CENTER);
@@ -110,6 +153,7 @@ public class UserDashboard extends JFrame {
         contentPanel.revalidate();
     }
 
+    // ================= BUTTON STYLE =================
     private JButton createSidebarButton(String text) {
         JButton btn = new JButton(text);
         btn.setFont(new Font("Segoe UI", Font.BOLD, 15));
@@ -118,13 +162,17 @@ public class UserDashboard extends JFrame {
         btn.setFocusPainted(false);
         btn.setBorderPainted(false);
         btn.setOpaque(true);
-        btn.setContentAreaFilled(true);
         btn.setHorizontalAlignment(SwingConstants.LEFT);
         btn.setMargin(new Insets(0, 25, 0, 0));
 
         btn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) { btn.setBackground(new Color(52, 73, 94)); }
-            public void mouseExited(java.awt.event.MouseEvent evt) { btn.setBackground(new Color(44, 62, 80)); }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btn.setBackground(new Color(52, 73, 94));
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btn.setBackground(new Color(44, 62, 80));
+            }
         });
 
         return btn;
