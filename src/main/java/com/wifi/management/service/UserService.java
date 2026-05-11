@@ -71,4 +71,12 @@ public class UserService {
     public int getTotalCustomers() {
         return userDAO.getTotalCustomerCount();
     }
+    public String updateProfile(User user) {
+        if (user.getFullName().isEmpty() || user.getPhone().isEmpty() || user.getAddress().isEmpty()) {
+            return "Fields cannot be empty!";
+        }
+
+        boolean success = userDAO.updateCustomerProfile(user);
+        return success ? "Success" : "Update Failed!";
+    }
 }

@@ -89,6 +89,7 @@ public class UserDAO {
             if (rs.next()) {
                 User user = new User();
                 user.setUserId(rs.getInt("user_id"));
+                user.setRoleId(rs.getInt("role_id"));
                 user.setUsername(rs.getString("username"));
                 user.setFullName(rs.getString("full_name"));
                 user.setPhone(rs.getString("phone"));
@@ -259,5 +260,23 @@ public class UserDAO {
             System.err.println("Error counting customers: " + e.getMessage());
         }
         return 0;
+    }
+    public boolean updateCustomerProfile(User user) {
+        String sql = "UPDATE customer_details SET full_name = ?, phone = ?, installation_address = ? WHERE user_id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, user.getFullName());
+            pstmt.setString(2, user.getPhone());
+            pstmt.setString(3, user.getAddress());
+            pstmt.setInt(4, user.getUserId());
+
+            return pstmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
