@@ -4,7 +4,6 @@ import java.security.MessageDigest;
 
 public class hash_password {
 
-    // Returns hashed password (SHA-256)
     public static String hashPassword(String password) {
 
         if (password == null) {

@@ -81,7 +81,20 @@ public class AdminDashboard extends JFrame {
         btnRequests.addActionListener(e -> showConnectionRequests());
         sidebar.add(btnRequests);
 
-        sidebar.add(Box.createVerticalStrut(150));
+        // ================= NEW FEATURE BUTTON: AUDIT LOGS =================
+        JButton btnAuditLogs = createSidebarButton("Audit Log System 📜");
+        btnAuditLogs.setBackground(new Color(155, 89, 182)); // প্রফেশনাল পার্পল কালার
+        btnAuditLogs.addActionListener(e -> {
+            mainContent.removeAll();
+            // userId = 0 কারণ এটি এডমিন ভিউ, এবং isAdminView = true যাতে সবার লগ দেখায়
+            HistoryLogPanel adminLogPanel = new HistoryLogPanel(0, true);
+            mainContent.add(adminLogPanel, BorderLayout.CENTER);
+            mainContent.revalidate();
+            mainContent.repaint();
+        });
+        sidebar.add(btnAuditLogs);
+
+        sidebar.add(Box.createVerticalStrut(100)); // স্ট্রাট সামান্য কমানো হয়েছে নতুন বাটনের জায়গার জন্য
 
         JButton btnLogout = createSidebarButton("Logout System");
         btnLogout.setBackground(DANGER_COLOR);
@@ -222,7 +235,22 @@ public class AdminDashboard extends JFrame {
 
     private void handleSearch() {
         String keyword = txtSearch.getText().trim();
+
+        // যদি সার্চ বক্স একদম খালি রেখে সার্চ বাটনে ক্লিক করা হয়
+        if (keyword.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter a User ID or Username to search.", "Input Required", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         List<User> users = userService.searchUsers(keyword);
+
+        // 🔥 নতুন ভ্যালিডেশন: যদি এই আইডি বা নামে কোনো ইউজার ডাটাবেসে না থাকে
+        if (users == null || users.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No user found with ID or Username: '" + keyword + "' ❌", "User Not Found", JOptionPane.ERROR_MESSAGE);
+            return; // নিচে আর যাবে না, ফলে আগের টেবিল ভিউ যেমন ছিল তেমনই থাকবে
+        }
+
+        // ইউজার পাওয়া গেলে আগের মতোই টেবিলে ডাটা শো করবে
         String[] cols = {"ID", "Username", "Name", "Phone", "Address"};
         DefaultTableModel model = new DefaultTableModel(cols, 0);
 
@@ -234,6 +262,7 @@ public class AdminDashboard extends JFrame {
         styleTable(table);
         updateMainContent(new JScrollPane(table), null, "User Search Results: " + keyword);
     }
+
     private void showAllCustomers() {
         List<User> customers = userService.getAllCustomers();
         int totalCount = userService.getTotalCustomers();
@@ -270,6 +299,7 @@ public class AdminDashboard extends JFrame {
 
         updateView(scrollPane, footerPanel, "Customer Management Directory");
     }
+
     private void applyTableStyle(JTable table) {
         table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         table.setRowHeight(35);
@@ -291,8 +321,8 @@ public class AdminDashboard extends JFrame {
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
     }
-    private void updateView(Component content, Component footer, String title) {
 
+    private void updateView(Component content, Component footer, String title) {
         mainContent.removeAll();
 
         JLabel lblTitle = new JLabel(title);

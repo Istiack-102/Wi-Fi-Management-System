@@ -13,8 +13,8 @@ public class UserDashboard extends JFrame {
     private JPanel contentPanel;
     private UserDAO userDAO;
     private ConnectionRequestService requestService;
-    private JLabel lblPlanName; // Already declared in your code
-    private JLabel lblStatus;   // Already declared in your code
+    private JLabel lblPlanName;
+    private JLabel lblStatus;
     private JButton btnRequestConnection;
     private JLabel lblRequestStatus;
 
@@ -42,7 +42,7 @@ public class UserDashboard extends JFrame {
         JPanel sidebar = new JPanel();
         sidebar.setBackground(new Color(44, 62, 80));
         sidebar.setPreferredSize(new Dimension(250, 750));
-        sidebar.setLayout(new GridLayout(11, 1, 0, 5));
+        sidebar.setLayout(new GridLayout(12, 1, 0, 5)); // GridLayout ১১ থেকে ১২ করা হয়েছে নতুন বাটনের জন্য
 
         JLabel lblBrand = new JLabel("  WIFI MANAGER", SwingConstants.LEFT);
         lblBrand.setForeground(new Color(52, 152, 219));
@@ -53,14 +53,18 @@ public class UserDashboard extends JFrame {
         JButton btnPlans = createSidebarButton("🌐 Internet Plans");
         JButton btnPayment = createSidebarButton("💳 Make Payment");
         JButton btnStatus = createSidebarButton("📊 Subscription Status");
-        JButton btnLogout = createSidebarButton("🚪 Logout");
 
+        // ================= NEW FEATURE BUTTON: MY ACTIVITY LOG =================
+        JButton btnActivityLog = createSidebarButton("📜 My Activity Log");
+
+        JButton btnLogout = createSidebarButton("🚪 Logout");
         btnLogout.setBackground(new Color(192, 57, 43));
 
         sidebar.add(btnProfile);
         sidebar.add(btnPlans);
         sidebar.add(btnPayment);
         sidebar.add(btnStatus);
+        sidebar.add(btnActivityLog); // সাইডবারে বাটনটি যোগ করা হলো
 
         btnRequestConnection = createSidebarButton("📡 Request Connection");
         sidebar.add(btnRequestConnection);
@@ -70,10 +74,10 @@ public class UserDashboard extends JFrame {
 
         add(sidebar, BorderLayout.WEST);
 
-        // ================= HEADER (UPDATED TO SHOW STATUS) =================
+        // ================= HEADER =================
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(Color.WHITE);
-        header.setPreferredSize(new Dimension(900, 85)); // Height slightly increased
+        header.setPreferredSize(new Dimension(900, 85));
         header.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(224, 224, 224)));
 
         // Left side: Welcome Message
@@ -108,11 +112,17 @@ public class UserDashboard extends JFrame {
         lblRequestStatus = new JLabel("Request Status: Not Requested");
         lblRequestStatus.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
-        // ================= ACTIONS =================
+        // ================= ACTIONS & EVENT LISTENERS =================
         btnProfile.addActionListener(e -> showPanel(new CustomerPanel(currentUser)));
         btnPlans.addActionListener(e -> showPanel(new PlanPanel(this, currentUser)));
         btnPayment.addActionListener(e -> showPanel(new PaymentPanel(this, currentUser, 0, 0.0)));
         btnStatus.addActionListener(e -> showPanel(new SubscriptionPanel(currentUser)));
+
+        // NEW BUTTON ACTION: নিজের হিস্ট্রি প্যানেল লোড করা
+        btnActivityLog.addActionListener(e -> {
+            // ১মবার প্যারামিটার কাস্টমারের আইডি এবং ২য় প্যারামিটার false (কারণ এটি এডমিন ভিউ না)
+            showPanel(new HistoryLogPanel(currentUser.getUserId(), false));
+        });
 
         btnRequestConnection.addActionListener(e -> {
             String status = requestService.getStatus(currentUser.getUserId());
@@ -140,7 +150,7 @@ public class UserDashboard extends JFrame {
             }
         });
 
-        // 🔥 INITIAL STATUS LOAD
+        // INITIAL STATUS LOAD
         displaySubscriptionStatus(this.currentUser);
     }
 
@@ -168,7 +178,7 @@ public class UserDashboard extends JFrame {
             java.util.Date today = new java.util.Date();
             if (currentUser.getExpiryDate().after(today)) {
                 status = "Active (Expires: " + currentUser.getExpiryDate().toString() + ")";
-                statusColor = new Color(46, 204, 113); // সবুজ
+                statusColor = new Color(46, 204, 113);
             } else {
                 status = "Expired on " + currentUser.getExpiryDate().toString();
                 statusColor = Color.RED;

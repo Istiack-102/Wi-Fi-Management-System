@@ -9,7 +9,6 @@ import java.time.temporal.ChronoUnit;
 
 public class SubscriptionService {
 
-    // ================= 1. DAYS REMAINING =================
     public long getDaysRemaining(Date expiryDate) {
 
         if (expiryDate == null) return 0;
@@ -22,7 +21,6 @@ public class SubscriptionService {
         return ChronoUnit.DAYS.between(today, expiry);
     }
 
-    // ================= 2. CHECK ACTIVE =================
     public boolean isSubscriptionActive(Subscription sub) {
 
         if (sub == null || sub.getStatus() == null) return false;
@@ -34,7 +32,6 @@ public class SubscriptionService {
         return !sub.getExpiryDate().toLocalDate().isBefore(today);
     }
 
-    // ================= 3. RENEWAL WARNING =================
     public boolean needsRenewalNotice(Date expiryDate) {
 
         long daysLeft = getDaysRemaining(expiryDate);
@@ -42,7 +39,6 @@ public class SubscriptionService {
         return daysLeft >= 0 && daysLeft <= 3;
     }
 
-    // ================= 4. GET SUBSCRIPTION STATUS (IMPORTANT FIX) =================
     public String getSubscriptionStatus(int userId) {
 
         String sql = """
@@ -70,7 +66,6 @@ public class SubscriptionService {
         return null;
     }
 
-    // ================= 5. GET PLAN NAME =================
     public String getPlanName(int userId) {
 
         String sql = """
@@ -99,7 +94,6 @@ public class SubscriptionService {
         return "N/A";
     }
 
-    // ================= 6. GET PRICE =================
     public String getPrice(int userId) {
 
         String sql = """
@@ -128,7 +122,6 @@ public class SubscriptionService {
         return "N/A";
     }
 
-    // ================= 7. GET START DATE =================
     public String getStartDate(int userId) {
 
         String sql = """

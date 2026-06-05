@@ -34,7 +34,7 @@ public class Strong_password_check {
             missing.add("At least one special character (@$!%*?&)");
         }
 
-        // Space check
+
         if (password.contains(" ")) {
             missing.add("No spaces allowed");
         }

@@ -16,13 +16,11 @@ public class UserService {
         this.userDAO = new UserDAO();
     }
 
-    // ================= AUTHENTICATION =================
     public User authenticateUser(String username, String plainPassword) {
         String hashedInput = hash_password.hashPassword(plainPassword);
         return userDAO.login(username, hashedInput);
     }
 
-    // ================= REGISTER USER =================
     public String registerNewCustomer(User user, String plainPassword) {
         if (!BD_Number_check.isValidBDNumber(user.getPhone())) {
             return "Invalid Bangladeshi phone number!";
@@ -40,34 +38,26 @@ public class UserService {
         return success ? "Registration Successful" : "Username already exists or DB error";
     }
 
-    // ================= SINGLE USER SEARCH (ADMIN) =================
     public User findUserForAdmin(int userId) {
         return userDAO.searchUserById(userId);
     }
 
-    // ================= FULL PROFILE =================
     public User getUserProfile(int userId) {
         return userDAO.getUserFullProfile(userId);
     }
 
-    // ================= CHECK CUSTOMER STATUS =================
     public boolean isVerifiedCustomer(int userId) {
         return userDAO.isExistingCustomer(userId);
     }
 
-    // ================= MULTI USER SEARCH =================
     public List<User> searchUsers(String keyword) {
         return userDAO.searchUsers(keyword);
     }
 
-    // ================= 🔥 UPDATED: VIEW ALL CUSTOMERS =================
     public List<User> getAllCustomers() {
-        // Stream API ব্যবহার করে ফিল্টার করার প্রয়োজন নেই,
-        // কারণ DAO লেভেলে SQL কোয়েরি দিয়েই আমরা কাস্টমারদের ডাটা নিয়ে আসছি।
         return userDAO.getAllCustomers();
     }
 
-    // ================= 🔥 NEW: TOTAL CUSTOMER COUNT =================
     public int getTotalCustomers() {
         return userDAO.getTotalCustomerCount();
     }

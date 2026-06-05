@@ -3,32 +3,29 @@ package com.wifi.management.model;
 public class User {
 
     private int userId;
-    private String username;      // ডাটাবেসের 'username' কলামের জন্য
-    private String passwordHash;  // ডাটাবেসের 'password_hash' কলামের জন্য
-    private String fullName;      // ডাটাবেসের 'full_name' কলামের জন্য
-    private String phone;         // ডাটাবেসের 'phone' কলামের জন্য
-    private String address;       // ডাটাবেসের 'installation_address' কলামের জন্য
+    private String username;
+    private String passwordHash;
+    private String fullName;
+    private String phone;
+    private String address;
     private int roleId;
     private String planName;
     private java.sql.Date expiryDate;
     private int speed;
     private double price;
 
-    // Getters and Setters
     public int getSpeed() { return speed; }
     public void setSpeed(int speed) { this.speed = speed; }
 
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
 
-    // Getters and Setters
     public String getPlanName() { return planName; }
     public void setPlanName(String planName) { this.planName = planName; }
 
     public java.sql.Date getExpiryDate() { return expiryDate; }
     public void setExpiryDate(java.sql.Date expiryDate) { this.expiryDate = expiryDate; }// ১ = Admin, ২ = Customer
 
-    // Constructor
     public User(int userId, String username, String passwordHash, String fullName, String phone, String address, int roleId) {
         this.userId = userId;
         this.username = username;
@@ -39,10 +36,8 @@ public class User {
         this.roleId = roleId;
     }
 
-    // Default Constructor
     public User() {}
 
-    // Getters
     public int getUserId() { return userId; }
     public String getUsername() { return username; }
     public String getPasswordHash() { return passwordHash; }
@@ -51,7 +46,6 @@ public class User {
     public String getAddress() { return address; }
     public int getRoleId() { return roleId; }
 
-    // Setters
     public void setUserId(int userId) { this.userId = userId; }
     public void setUsername(String username) { this.username = username; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
