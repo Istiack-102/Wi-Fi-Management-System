@@ -24,7 +24,6 @@ public class Card_Checker {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
             YearMonth expiry = YearMonth.parse(expiryDate, formatter);
-            // কার্ডের মেয়াদ বর্তমান মাসের সমান বা বেশি হতে হবে
             return expiry.isAfter(YearMonth.now()) || expiry.equals(YearMonth.now());
         } catch (DateTimeParseException e) {
             return false;

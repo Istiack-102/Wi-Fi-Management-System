@@ -13,7 +13,6 @@ public class PlanService {
         this.planDAO = new PlanDAO();
     }
 
-    // সংশোধিত মেথড
     public boolean updatePlan(int planId, String name, int speed, double price) {
         Plan plan = new Plan();
         plan.setPlanId(planId);
@@ -21,7 +20,6 @@ public class PlanService {
         plan.setSpeedLimitMbps(speed);
         plan.setMonthlyPrice(price);
 
-        // DAO মেথডটি এখন সঠিক আর্গুমেন্ট পাবে
         return planDAO.updatePlan(plan);
     }
 

@@ -111,31 +111,36 @@ public class UserDAO {
 
     // ================= ADMIN SEARCH BY ID (VIEW) =================
     public User searchUserById(int userId) {
-
+        // আপডেটেড ভিউ থেকে সব ডাটা সিলেক্ট করা হচ্ছে
         String sql = "SELECT * FROM view_admin_search_user WHERE user_id = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, userId);
-
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
                 User user = new User();
 
+                // ডাটাবেসের কলামগুলোর ভ্যালু মডেল অবজেক্টে সেট করা হচ্ছে
                 user.setUserId(rs.getInt("user_id"));
+                user.setUsername(rs.getString("username"));
                 user.setFullName(rs.getString("full_name"));
                 user.setPhone(rs.getString("phone"));
+                user.setAddress(rs.getString("installation_address"));
+                user.setMacAddress(rs.getString("mac_address"));
+                user.setPlanName(rs.getString("plan_name"));
+                user.setExpiryDate(rs.getDate("expiry_date")); // java.sql.Date বা java.util.Date অনুযায়ী
 
                 return user;
             }
 
         } catch (SQLException e) {
+            System.err.println("Error while searching user by ID: " + e.getMessage());
             e.printStackTrace();
         }
-
-        return null;
+        return null; // ইউজার না পাওয়া গেলে null রিটার্ন করবে
     }
 
     // ================= NEW: MULTI USER SEARCH (FOR TABLE) =================
@@ -278,5 +283,65 @@ public class UserDAO {
             e.printStackTrace();
             return false;
         }
+    }
+    // =========================================================================
+    // ১. অ্যাডমিন প্যানেলের জন্য: সব ইউজারের প্রোফাইল পরিবর্তনের হিস্ট্রি নিয়ে আসা
+    // =========================================================================
+    public java.util.List<com.wifi.management.model.HistoryLog> getAllProfileHistoryLogs() {
+        java.util.List<com.wifi.management.model.HistoryLog> list = new java.util.ArrayList<>();
+        String sql = "SELECT * FROM view_profile_history_logs ORDER BY changed_at DESC";
+
+        // এখানে com.wifi.management.util.DBConnection ব্যবহার করা হয়েছে, আপনার কানেকশন ক্লাসের নাম অনুযায়ী পরিবর্তন করতে পারেন
+        try (java.sql.Connection conn = com.wifi.management.utils.DBConnection.getConnection();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql);
+             java.sql.ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(new com.wifi.management.model.HistoryLog(
+                        rs.getInt("log_id"),
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        rs.getString("field_name"),
+                        rs.getNString("old_value"), // TEXT ফিল্ডের জন্য নিরাপদ
+                        rs.getNString("new_value"),
+                        rs.getTimestamp("changed_at")
+                ));
+            }
+        } catch (java.sql.SQLException e) {
+            System.err.println("Error fetching all history logs: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // =========================================================================
+    // ২. কাস্টমার প্যানেলের জন্য: শুধুমাত্র নির্দিষ্ট কাস্টমারের নিজের হিস্ট্রি নিয়ে আসা
+    // =========================================================================
+    public java.util.List<com.wifi.management.model.HistoryLog> getIndividualProfileHistory(int userId) {
+        java.util.List<com.wifi.management.model.HistoryLog> list = new java.util.ArrayList<>();
+        String sql = "SELECT * FROM view_profile_history_logs WHERE user_id = ? ORDER BY changed_at DESC";
+
+        try (java.sql.Connection conn = com.wifi.management.utils.DBConnection.getConnection();
+             java.sql.PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+            try (java.sql.ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new com.wifi.management.model.HistoryLog(
+                            rs.getInt("log_id"),
+                            rs.getInt("user_id"),
+                            rs.getString("username"),
+                            rs.getString("field_name"),
+                            rs.getNString("old_value"),
+                            rs.getNString("new_value"),
+                            rs.getTimestamp("changed_at")
+                    ));
+                }
+            }
+        } catch (java.sql.SQLException e) {
+            System.err.println("Error fetching individual history logs: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return list;
     }
 }
