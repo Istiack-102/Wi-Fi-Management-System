@@ -111,31 +111,36 @@ public class UserDAO {
 
     // ================= ADMIN SEARCH BY ID (VIEW) =================
     public User searchUserById(int userId) {
-
+        // আপডেটেড ভিউ থেকে সব ডাটা সিলেক্ট করা হচ্ছে
         String sql = "SELECT * FROM view_admin_search_user WHERE user_id = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, userId);
-
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
                 User user = new User();
 
+                // ডাটাবেসের কলামগুলোর ভ্যালু মডেল অবজেক্টে সেট করা হচ্ছে
                 user.setUserId(rs.getInt("user_id"));
+                user.setUsername(rs.getString("username"));
                 user.setFullName(rs.getString("full_name"));
                 user.setPhone(rs.getString("phone"));
+                user.setAddress(rs.getString("installation_address"));
+                user.setMacAddress(rs.getString("mac_address"));
+                user.setPlanName(rs.getString("plan_name"));
+                user.setExpiryDate(rs.getDate("expiry_date")); // java.sql.Date বা java.util.Date অনুযায়ী
 
                 return user;
             }
 
         } catch (SQLException e) {
+            System.err.println("Error while searching user by ID: " + e.getMessage());
             e.printStackTrace();
         }
-
-        return null;
+        return null; // ইউজার না পাওয়া গেলে null রিটার্ন করবে
     }
 
     // ================= NEW: MULTI USER SEARCH (FOR TABLE) =================

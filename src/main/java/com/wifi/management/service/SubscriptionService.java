@@ -9,8 +9,35 @@ import java.time.temporal.ChronoUnit;
 
 public class SubscriptionService {
 
-    public long getDaysRemaining(Date expiryDate) {
+    // =====================================================================
+    // 🛑 নতুন লজিক: চলতি মাসে অলরেডি ইউজার কোনো প্ল্যান কিনেছে কি না তা চেক করা
+    // =====================================================================
+    public boolean hasUserPurchasedThisMonth(int userId) {
+        String sql = """
+                SELECT COUNT(*) 
+                FROM transactions 
+                WHERE user_id = ? 
+                  AND MONTH(payment_date) = MONTH(CURRENT_DATE()) 
+                  AND YEAR(payment_date) = YEAR(CURRENT_DATE())
+                """;
 
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0; // এন্ট্রি থাকলে true রিটার্ন করবে
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("🔴 Error checking monthly purchase limit in SubscriptionService: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public long getDaysRemaining(Date expiryDate) {
         if (expiryDate == null) return 0;
 
         LocalDate today = LocalDate.now();
@@ -22,25 +49,20 @@ public class SubscriptionService {
     }
 
     public boolean isSubscriptionActive(Subscription sub) {
-
-        if (sub == null || sub.getStatus() == null) return false;
+        if (sub == null || sub.getStatus() == null || sub.getExpiryDate() == null) return false;
 
         if (!"active".equalsIgnoreCase(sub.getStatus())) return false;
 
         LocalDate today = LocalDate.now();
-
         return !sub.getExpiryDate().toLocalDate().isBefore(today);
     }
 
     public boolean needsRenewalNotice(Date expiryDate) {
-
         long daysLeft = getDaysRemaining(expiryDate);
-
         return daysLeft >= 0 && daysLeft <= 3;
     }
 
     public String getSubscriptionStatus(int userId) {
-
         String sql = """
                 SELECT s.status
                 FROM subscriptions s
@@ -53,21 +75,18 @@ public class SubscriptionService {
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userId);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return rs.getString("status");
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("status");
+                }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return null;
+        return "inactive"; // ডিফল্ট স্ট্যাটাস
     }
 
     public String getPlanName(int userId) {
-
         String sql = """
                 SELECT p.plan_name
                 FROM subscriptions s
@@ -81,21 +100,18 @@ public class SubscriptionService {
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userId);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return rs.getString("plan_name");
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("plan_name");
+                }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return "N/A";
+        return "No Active Plan ❌";
     }
 
     public String getPrice(int userId) {
-
         String sql = """
                 SELECT p.monthly_price
                 FROM subscriptions s
@@ -109,26 +125,23 @@ public class SubscriptionService {
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userId);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return "৳ " + rs.getDouble("monthly_price");
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return "৳ " + rs.getDouble("monthly_price");
+                }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return "N/A";
     }
 
     public String getStartDate(int userId) {
-
         String sql = """
-                SELECT s.sub_id, s.expiry_date
-                FROM subscriptions s
-                WHERE s.user_id = ?
-                ORDER BY s.sub_id DESC
+                SELECT subscription_date 
+                FROM subscriptions 
+                WHERE user_id = ? 
+                ORDER BY sub_id DESC 
                 LIMIT 1
                 """;
 
@@ -136,23 +149,19 @@ public class SubscriptionService {
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userId);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                // simple assumption (you can improve later)
-                return "Active Subscription";
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next() && rs.getDate("subscription_date") != null) {
+                    return rs.getDate("subscription_date").toString();
+                }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return "N/A";
     }
 
-    // ================= 8. GET EXPIRY DATE =================
+    // ================= 8. GET EXPIRY DATE (Null Safe করা হয়েছে) =================
     public String getExpiryDate(int userId) {
-
         String sql = """
                 SELECT expiry_date
                 FROM subscriptions
@@ -165,16 +174,14 @@ public class SubscriptionService {
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userId);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return rs.getDate("expiry_date").toString();
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next() && rs.getDate("expiry_date") != null) {
+                    return rs.getDate("expiry_date").toString();
+                }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return "N/A";
     }
 }

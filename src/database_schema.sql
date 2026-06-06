@@ -5,10 +5,9 @@ CREATE TABLE roles (
     role_id INT PRIMARY KEY AUTO_INCREMENT,
     role_name VARCHAR(20) UNIQUE NOT NULL
 );
-
 INSERT IGNORE INTO roles (role_id, role_name) VALUES (1, 'Admin');
 INSERT IGNORE INTO roles (role_id, role_name) VALUES (2, 'Customer');
-SELECT * FROM roles;
+select * from roles;
 
 CREATE TABLE plans (
     plan_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -16,7 +15,6 @@ CREATE TABLE plans (
     speed_limit_mbps INT NOT NULL,
     monthly_price DECIMAL(10, 2) NOT NULL
 );
-
 INSERT INTO plans (plan_name, speed_limit_mbps, monthly_price) VALUES
 ('Starter Eco', 10, 500.00),
 ('Home Basic', 20, 800.00),
@@ -24,7 +22,7 @@ INSERT INTO plans (plan_name, speed_limit_mbps, monthly_price) VALUES
 ('Premium Ultra', 50, 1500.00),
 ('Gamer Pro', 80, 2500.00),
 ('Business Dedicated', 100, 5000.00);
-SELECT * FROM plans;
+select * from plans;
 
 CREATE TABLE users (
     user_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -33,9 +31,8 @@ CREATE TABLE users (
     role_id INT,
     FOREIGN KEY (role_id) REFERENCES roles(role_id)
 );
-
-SELECT * FROM users;
-INSERT INTO users VALUES (1, 'Istiack', '898a935bd7fc2852a9b3177f0aaeec13f41f31cb387fa9dc425c591541363cd2', 1);
+select * from users;
+insert  into users values ( 1, 'Istiack', '898a935bd7fc2852a9b3177f0aaeec13f41f31cb387fa9dc425c591541363cd2',1);
 
 CREATE TABLE customer_details (
     detail_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -46,8 +43,7 @@ CREATE TABLE customer_details (
     mac_address VARCHAR(17) UNIQUE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
-
-SELECT * FROM customer_details;
+select * from customer_details;
 
 UPDATE customer_details
 SET mac_address = 'AA:BB:CC:DD:EE:FF'
@@ -62,8 +58,7 @@ CREATE TABLE subscriptions (
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (plan_id) REFERENCES plans(plan_id)
 );
-
-SELECT * FROM subscriptions;
+select * from subscriptions;
 
 CREATE TABLE transactions (
     transaction_id VARCHAR(50) PRIMARY KEY,
@@ -73,8 +68,7 @@ CREATE TABLE transactions (
     payment_method VARCHAR(20),
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
-
-SELECT * FROM transactions;
+select * from transactions;
 
 CREATE TABLE usage_logs (
     usage_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -84,11 +78,13 @@ CREATE TABLE usage_logs (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
-CREATE VIEW view_admin_search_user AS
+CREATE OR REPLACE VIEW view_admin_search_user AS
 SELECT
     u.user_id,
+    u.username,
     cd.full_name,
     cd.phone,
+    cd.installation_address,
     p.plan_name,
     s.expiry_date,
     s.status,
@@ -97,6 +93,7 @@ FROM users u
 JOIN customer_details cd ON u.user_id = cd.user_id
 JOIN subscriptions s ON u.user_id = s.user_id
 JOIN plans p ON s.plan_id = p.plan_id;
+select * from view_admin_search_user;
 
 DROP VIEW IF EXISTS view_customer_dashboard;
 
@@ -116,8 +113,7 @@ FROM users u
 LEFT JOIN customer_details cd ON u.user_id = cd.user_id
 LEFT JOIN subscriptions s ON u.user_id = s.user_id
 LEFT JOIN plans p ON s.plan_id = p.plan_id;
-
-SELECT * FROM view_customer_dashboard;
+select  * from view_customer_dashboard;
 
 CREATE TABLE connection_requests (
     request_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -125,14 +121,13 @@ CREATE TABLE connection_requests (
     plan_id INT NOT NULL,
     request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
+    mac_address VARCHAR(20) DEFAULT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (plan_id) REFERENCES plans(plan_id)
 );
-
-SELECT * FROM connection_requests;
+select * from connection_requests;
 
 ALTER TABLE subscriptions ADD CONSTRAINT UNIQUE (user_id);
-ALTER TABLE connection_requests ADD COLUMN mac_address VARCHAR(20) DEFAULT NULL AFTER status;
 ALTER TABLE customer_details MODIFY COLUMN mac_address VARCHAR(20);
 
 CREATE TABLE IF NOT EXISTS profile_update_history (

@@ -1,5 +1,6 @@
 package com.wifi.management.gui;
 
+import com.wifi.management.database_operation.UserDAO;
 import com.wifi.management.model.User;
 import com.wifi.management.model.Plan;
 import com.wifi.management.model.ConnectionRequest;
@@ -42,7 +43,6 @@ public class AdminDashboard extends JFrame {
         setLayout(new BorderLayout());
 
         add(createSidebar(), BorderLayout.WEST);
-
         add(createTopBar(), BorderLayout.NORTH);
 
         mainContent = new JPanel(new BorderLayout());
@@ -81,12 +81,10 @@ public class AdminDashboard extends JFrame {
         btnRequests.addActionListener(e -> showConnectionRequests());
         sidebar.add(btnRequests);
 
-        // ================= NEW FEATURE BUTTON: AUDIT LOGS =================
         JButton btnAuditLogs = createSidebarButton("Audit Log System 📜");
-        btnAuditLogs.setBackground(new Color(155, 89, 182)); // প্রফেশনাল পার্পল কালার
+        btnAuditLogs.setBackground(new Color(155, 89, 182));
         btnAuditLogs.addActionListener(e -> {
             mainContent.removeAll();
-            // userId = 0 কারণ এটি এডমিন ভিউ, এবং isAdminView = true যাতে সবার লগ দেখায়
             HistoryLogPanel adminLogPanel = new HistoryLogPanel(0, true);
             mainContent.add(adminLogPanel, BorderLayout.CENTER);
             mainContent.revalidate();
@@ -94,7 +92,7 @@ public class AdminDashboard extends JFrame {
         });
         sidebar.add(btnAuditLogs);
 
-        sidebar.add(Box.createVerticalStrut(100)); // স্ট্রাট সামান্য কমানো হয়েছে নতুন বাটনের জায়গার জন্য
+        sidebar.add(Box.createVerticalStrut(100));
 
         JButton btnLogout = createSidebarButton("Logout System");
         btnLogout.setBackground(DANGER_COLOR);
@@ -227,7 +225,7 @@ public class AdminDashboard extends JFrame {
         if (success) {
             String msg = approve ? "Request Approved and MAC Assigned!" : "Request Rejected.";
             JOptionPane.showMessageDialog(this, msg);
-            showConnectionRequests(); // Refresh the table
+            showConnectionRequests();
         } else {
             JOptionPane.showMessageDialog(this, "Operation failed. Check database connection.");
         }
@@ -236,31 +234,171 @@ public class AdminDashboard extends JFrame {
     private void handleSearch() {
         String keyword = txtSearch.getText().trim();
 
-        // যদি সার্চ বক্স একদম খালি রেখে সার্চ বাটনে ক্লিক করা হয়
         if (keyword.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter a User ID or Username to search.", "Input Required", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        List<User> users = userService.searchUsers(keyword);
+        User u = null;
+        try {
+            int id = Integer.parseInt(keyword);
+            u = userService.searchUserById(id);
+        } catch (NumberFormatException ex) {
+            List<User> users = userService.searchUsers(keyword);
+            if (users != null && !users.isEmpty()) {
+                u = users.get(0);
+            }
+        }
 
-        // 🔥 নতুন ভ্যালিডেশন: যদি এই আইডি বা নামে কোনো ইউজার ডাটাবেসে না থাকে
-        if (users == null || users.isEmpty()) {
+        if (u == null) {
             JOptionPane.showMessageDialog(this, "No user found with ID or Username: '" + keyword + "' ❌", "User Not Found", JOptionPane.ERROR_MESSAGE);
-            return; // নিচে আর যাবে না, ফলে আগের টেবিল ভিউ যেমন ছিল তেমনই থাকবে
+            return;
         }
 
-        // ইউজার পাওয়া গেলে আগের মতোই টেবিলে ডাটা শো করবে
-        String[] cols = {"ID", "Username", "Name", "Phone", "Address"};
-        DefaultTableModel model = new DefaultTableModel(cols, 0);
+        // =====================================================================
+        // নতুন ডিজাইন: ভার্টিক্যাল প্রোফাইল টেবিল ভিউ (Vertical Table View)
+        // =====================================================================
+        JPanel profileViewPanel = new JPanel(new BorderLayout(20, 20));
+        profileViewPanel.setBackground(new Color(245, 246, 250));
+        profileViewPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
 
-        for (User u : users) {
-            model.addRow(new Object[]{u.getUserId(), u.getUsername(), u.getFullName(), u.getPhone(), u.getAddress()});
+        // হেডার টাইটেল
+        JLabel lblProfileTitle = new JLabel("👤 Customer Profile Specification");
+        lblProfileTitle.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lblProfileTitle.setForeground(new Color(44, 62, 80));
+        profileViewPanel.add(lblProfileTitle, BorderLayout.NORTH);
+
+        // টেবিলের কলাম নেম (লুকানোর জন্য কাস্টমাইজ করা হবে)
+        String[] columns = {"Field/Property", "Registered Information"};
+
+        // এক্সপায়ারি ডেট টেক্সট তৈরি
+        String expiryText = "N/A";
+        if (u.getExpiryDate() != null) {
+            expiryText = u.getExpiryDate().toString();
+            if (u.getExpiryDate().before(new java.util.Date())) {
+                expiryText += " (Expired ❌)";
+            } else {
+                expiryText += " (Active ✅)";
+            }
         }
 
-        JTable table = new JTable(model);
-        styleTable(table);
-        updateMainContent(new JScrollPane(table), null, "User Search Results: " + keyword);
+        // রো ভিত্তিক ডাটা ম্যাপিং (১ম রো আইডি, ২য় রো ইউজারনেম...)
+        Object[][] data = {
+                {"User Database ID", "# " + u.getUserId()},
+                {"Account Username", u.getUsername() != null ? u.getUsername() : "N/A"},
+                {"Full Customer Name", u.getFullName() != null ? u.getFullName() : "N/A"},
+                {"Registered Phone Number", u.getPhone() != null ? u.getPhone() : "N/A"},
+                {"Installation Address", u.getAddress() != null ? u.getAddress() : "N/A"},
+                {"Hardware MAC Address", (u.getMacAddress() != null && !u.getMacAddress().equalsIgnoreCase("null")) ? u.getMacAddress() : "Not Assigned ⚠️"},
+                {"Current Internet Plan", (u.getPlanName() != null && !u.getPlanName().equalsIgnoreCase("null")) ? u.getPlanName() : "No Active Plan ❌"},
+                {"Subscription Expiry Date", expiryText}
+        };
+
+        // টেবিল মডেল তৈরি (যাতে এডমিন ডাবল ক্লিক করে এডিট করতে না পারে)
+        DefaultTableModel tableModel = new DefaultTableModel(data, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) { return false; }
+        };
+
+        JTable profileTable = new JTable(tableModel);
+
+        // =====================================================================
+        // টেবিল স্টাইলিং (প্রফেশনাল লুক দেওয়ার জন্য)
+        // =====================================================================
+        profileTable.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        profileTable.setRowHeight(45); // প্রতিটি রো বেশ বড় এবং ক্লিয়ার দেখাবে
+        profileTable.setShowGrid(true);
+        profileTable.setGridColor(new Color(230, 235, 240));
+        profileTable.setSelectionBackground(new Color(236, 240, 241));
+        profileTable.setSelectionForeground(Color.BLACK);
+
+        // কাস্টম সেল রেন্ডারার (বাম কলাম বোল্ড এবং ডান কলাম কালারফুল করার জন্য)
+        profileTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                // লেখার প্যাডিং ঠিক করা
+                setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 15));
+
+                if (column == 0) {
+                    // বাম পাশের কলাম: বোল্ড এবং গ্রে কালার (Properties)
+                    c.setFont(new Font("Segoe UI", Font.BOLD, 15));
+                    c.setForeground(new Color(127, 140, 141));
+                    setHorizontalAlignment(JLabel.LEFT);
+                } else {
+                    // ডান পাশের কলাম: রেগুলার এবং ডার্ক কালার (Values)
+                    c.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+                    c.setForeground(new Color(44, 62, 80));
+                    setHorizontalAlignment(JLabel.LEFT);
+
+                    // নির্দিষ্ট কিছু ভ্যালুর জন্য কাস্টম কালার হাইলাইট
+                    String valStr = value.toString();
+                    if (valStr.contains("Active ✅")) {
+                        c.setForeground(new Color(46, 204, 113)); // সবুজ
+                        c.setFont(new Font("Segoe UI", Font.BOLD, 15));
+                    } else if (valStr.contains("Expired ❌") || valStr.contains("No Active Plan ❌")) {
+                        c.setForeground(Color.RED); // লাল
+                    } else if (valStr.contains("Not Assigned ⚠️")) {
+                        c.setForeground(new Color(230, 126, 34)); // কমলা
+                    } else if (row == 6) {
+                        c.setForeground(ACCENT_COLOR); // প্ল্যান নেম ব্লু কালার
+                        c.setFont(new Font("Segoe UI", Font.BOLD, 15));
+                    }
+                }
+                return c;
+            }
+        });
+
+        // টেবিলের কলামের সাইজ ফিক্সড করা
+        profileTable.getColumnModel().getColumn(0).setPreferredWidth(250);
+        profileTable.getColumnModel().getColumn(1).setPreferredWidth(600);
+
+        // টেবিল হেডার কাস্টমাইজেশন
+        JTableHeader header = profileTable.getTableHeader();
+        header.setBackground(SIDEBAR_COLOR);
+        header.setForeground(Color.WHITE);
+        header.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        header.setPreferredSize(new Dimension(0, 40));
+
+        JScrollPane scrollPane = new JScrollPane(profileTable);
+        scrollPane.getViewport().setBackground(Color.WHITE);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(220, 223, 230), 1));
+
+        profileViewPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // ব্যাক বাটন সেকশন
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        bottomPanel.setOpaque(false);
+        JButton btnBack = new JButton("⬅️ Back to Directory");
+        btnBack.setBackground(new Color(149, 165, 166));
+        btnBack.setForeground(Color.WHITE);
+        btnBack.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnBack.setPreferredSize(new Dimension(180, 40));
+        btnBack.setFocusPainted(false);
+
+        btnBack.addActionListener(e -> showAllCustomers());
+        bottomPanel.add(btnBack);
+
+        profileViewPanel.add(bottomPanel, BorderLayout.SOUTH);
+
+        // মেইন কন্টেন্ট রিফ্রেশ
+        mainContent.removeAll();
+        mainContent.add(profileViewPanel, BorderLayout.CENTER);
+        mainContent.revalidate();
+        mainContent.repaint();
+    }
+
+    private void addProfileRow(JPanel panel, String labelText, String valueText, Font labelFont, Font valueFont, Color labelColor, Color valueColor) {
+        JLabel lblKey = new JLabel(labelText);
+        lblKey.setFont(labelFont);
+        lblKey.setForeground(labelColor);
+        panel.add(lblKey);
+
+        JLabel lblVal = new JLabel(valueText);
+        lblVal.setFont(valueFont);
+        lblVal.setForeground(valueColor);
+        panel.add(lblVal);
     }
 
     private void showAllCustomers() {
@@ -378,6 +516,6 @@ public class AdminDashboard extends JFrame {
         btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
         btn.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
-        return btn;
+        return btn; // 🔥 ফিক্সড: সিনট্যাক্স স্পেস টাইপো ঠিক করা হয়েছে
     }
 }

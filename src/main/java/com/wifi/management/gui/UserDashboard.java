@@ -3,6 +3,7 @@ package com.wifi.management.gui;
 import com.wifi.management.model.User;
 import com.wifi.management.database_operation.UserDAO;
 import com.wifi.management.service.ConnectionRequestService;
+import com.wifi.management.service.SubscriptionService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +14,7 @@ public class UserDashboard extends JFrame {
     private JPanel contentPanel;
     private UserDAO userDAO;
     private ConnectionRequestService requestService;
+    private SubscriptionService subscriptionService;
     private JLabel lblPlanName;
     private JLabel lblStatus;
     private JButton btnRequestConnection;
@@ -21,6 +23,7 @@ public class UserDashboard extends JFrame {
     public UserDashboard(User loggedInUser) {
         this.userDAO = new UserDAO();
         this.requestService = new ConnectionRequestService();
+        this.subscriptionService = new SubscriptionService();
 
         this.currentUser = userDAO.getUserFullProfile(loggedInUser.getUserId());
 
@@ -42,7 +45,7 @@ public class UserDashboard extends JFrame {
         JPanel sidebar = new JPanel();
         sidebar.setBackground(new Color(44, 62, 80));
         sidebar.setPreferredSize(new Dimension(250, 750));
-        sidebar.setLayout(new GridLayout(12, 1, 0, 5)); // GridLayout ১১ থেকে ১২ করা হয়েছে নতুন বাটনের জন্য
+        sidebar.setLayout(new GridLayout(12, 1, 0, 5));
 
         JLabel lblBrand = new JLabel("  WIFI MANAGER", SwingConstants.LEFT);
         lblBrand.setForeground(new Color(52, 152, 219));
@@ -53,8 +56,6 @@ public class UserDashboard extends JFrame {
         JButton btnPlans = createSidebarButton("🌐 Internet Plans");
         JButton btnPayment = createSidebarButton("💳 Make Payment");
         JButton btnStatus = createSidebarButton("📊 Subscription Status");
-
-        // ================= NEW FEATURE BUTTON: MY ACTIVITY LOG =================
         JButton btnActivityLog = createSidebarButton("📜 My Activity Log");
 
         JButton btnLogout = createSidebarButton("🚪 Logout");
@@ -64,12 +65,12 @@ public class UserDashboard extends JFrame {
         sidebar.add(btnPlans);
         sidebar.add(btnPayment);
         sidebar.add(btnStatus);
-        sidebar.add(btnActivityLog); // সাইডবারে বাটনটি যোগ করা হলো
+        sidebar.add(btnActivityLog);
 
         btnRequestConnection = createSidebarButton("📡 Request Connection");
         sidebar.add(btnRequestConnection);
 
-        sidebar.add(new JLabel(""));
+        sidebar.add(Box.createGlue());
         sidebar.add(btnLogout);
 
         add(sidebar, BorderLayout.WEST);
@@ -80,12 +81,10 @@ public class UserDashboard extends JFrame {
         header.setPreferredSize(new Dimension(900, 85));
         header.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(224, 224, 224)));
 
-        // Left side: Welcome Message
         JLabel lblUser = new JLabel("  Welcome, " + currentUser.getUsername() + " (#" + currentUser.getUserId() + ")");
         lblUser.setFont(new Font("Segoe UI", Font.BOLD, 18));
         header.add(lblUser, BorderLayout.WEST);
 
-        // Right side: Subscription Status Display
         JPanel statusInfoPanel = new JPanel(new GridLayout(2, 1));
         statusInfoPanel.setBackground(Color.WHITE);
         statusInfoPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 20));
@@ -102,7 +101,7 @@ public class UserDashboard extends JFrame {
 
         add(header, BorderLayout.NORTH);
 
-        // ================= CONTENT =================
+        // ================= CONTENT PANEL =================
         contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBackground(new Color(241, 242, 246));
         add(contentPanel, BorderLayout.CENTER);
@@ -114,31 +113,47 @@ public class UserDashboard extends JFrame {
 
         // ================= ACTIONS & EVENT LISTENERS =================
         btnProfile.addActionListener(e -> showPanel(new CustomerPanel(currentUser)));
-        btnPlans.addActionListener(e -> showPanel(new PlanPanel(this, currentUser)));
-        btnPayment.addActionListener(e -> showPanel(new PaymentPanel(this, currentUser, 0, 0.0)));
+
+        // 🔥 আপডেট: ইউজার এখন কোনো বাধা ছাড়াই সব ইন্টারনেট প্ল্যান দেখতে পারবেন
+        btnPlans.addActionListener(e -> {
+            showPanel(new PlanPanel(this, currentUser));
+        });
+
+        btnPayment.addActionListener(e -> {
+            // 🛑 প্রোটেকশন: সরাসরি ম্যানুয়াল পেমেন্ট ট্যাবে যেতে চাইলে ব্লক করবে
+            if (subscriptionService.hasUserPurchasedThisMonth(currentUser.getUserId())) {
+                showMonthlyLimitWarning();
+                return;
+            }
+            showPanel(new PaymentPanel(this, currentUser, 0, 0.0));
+        });
+
         btnStatus.addActionListener(e -> showPanel(new SubscriptionPanel(currentUser)));
 
-        // NEW BUTTON ACTION: নিজের হিস্ট্রি প্যানেল লোড করা
         btnActivityLog.addActionListener(e -> {
-            // ১মবার প্যারামিটার কাস্টমারের আইডি এবং ২য় প্যারামিটার false (কারণ এটি এডমিন ভিউ না)
             showPanel(new HistoryLogPanel(currentUser.getUserId(), false));
         });
 
         btnRequestConnection.addActionListener(e -> {
+            if (subscriptionService.hasUserPurchasedThisMonth(currentUser.getUserId())) {
+                showMonthlyLimitWarning();
+                return;
+            }
+
             String status = requestService.getStatus(currentUser.getUserId());
             if (status == null) {
                 int planId = 1;
                 boolean result = requestService.requestConnection(currentUser.getUserId(), planId);
                 if (result) {
                     lblRequestStatus.setText("Request Status: Pending");
-                    JOptionPane.showMessageDialog(this, "Connection Requested Successfully!");
+                    JOptionPane.showMessageDialog(this, "Connection Requested Successfully! 🎉", "Success", JOptionPane.INFORMATION_MESSAGE);
                 }
             } else if (status.equals("pending")) {
-                JOptionPane.showMessageDialog(this, "Already Pending!");
+                JOptionPane.showMessageDialog(this, "Your previous request is already Pending! ⏳", "Status Notice", JOptionPane.WARNING_MESSAGE);
             } else if (status.equals("accepted")) {
-                JOptionPane.showMessageDialog(this, "Already Approved ✅");
+                JOptionPane.showMessageDialog(this, "Your connection is already Approved & Active! ✅", "Status Notice", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, "Rejected. You can request again.");
+                JOptionPane.showMessageDialog(this, "Your previous request was rejected. You can apply again.");
             }
         });
 
@@ -150,8 +165,17 @@ public class UserDashboard extends JFrame {
             }
         });
 
-        // INITIAL STATUS LOAD
         displaySubscriptionStatus(this.currentUser);
+    }
+
+    // 🛑 ১ মাসে ১টি মাত্র প্ল্যান কেনার ওয়ার্নিং পপ-আপ মেসেজ
+    private void showMonthlyLimitWarning() {
+        JOptionPane.showMessageDialog(this,
+                "🛑 Access Denied!\n" +
+                        "You have already purchased an internet package this month.\n" +
+                        "According to system rules, multiple plan swaps are restricted within the same month.",
+                "Purchase Blocked",
+                JOptionPane.ERROR_MESSAGE);
     }
 
     public void showPanel(JPanel panel) {
@@ -161,7 +185,13 @@ public class UserDashboard extends JFrame {
         contentPanel.revalidate();
     }
 
+    // 🔥 ইন্টারনেট প্ল্যান প্যানেলের "Buy" বাটনে ক্লিক করলে এই মেথডটি কল হয়
     public void loadPaymentPanel(int planId, double amount) {
+        // 🛑 সিকিউরিটি চেক: প্ল্যান দেখার পর "Buy" বাটনে ক্লিক করলেই এখানে Access Denied দেখাবে
+        if (subscriptionService.hasUserPurchasedThisMonth(currentUser.getUserId())) {
+            showMonthlyLimitWarning();
+            return;
+        }
         PaymentPanel payment = new PaymentPanel(this, this.currentUser, planId, amount);
         showPanel(payment);
     }
@@ -203,10 +233,14 @@ public class UserDashboard extends JFrame {
 
         btn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btn.setBackground(new Color(52, 73, 94));
+                if(btn.getBackground() != new Color(192, 57, 43)) {
+                    btn.setBackground(new Color(52, 73, 94));
+                }
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btn.setBackground(new Color(44, 62, 80));
+                if(btn.getBackground() != new Color(192, 57, 43)) {
+                    btn.setBackground(new Color(44, 62, 80));
+                }
             }
         });
 

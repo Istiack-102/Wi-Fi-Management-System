@@ -38,6 +38,11 @@ public class UserService {
         return success ? "Registration Successful" : "Username already exists or DB error";
     }
 
+    // 🔥 নতুন যুক্ত করা হলো: AdminDashboard-এর এরর দূর করার জন্য সরাসরি ম্যাপিং মেথড
+    public User searchUserById(int userId) {
+        return userDAO.searchUserById(userId);
+    }
+
     public User findUserForAdmin(int userId) {
         return userDAO.searchUserById(userId);
     }
@@ -61,6 +66,7 @@ public class UserService {
     public int getTotalCustomers() {
         return userDAO.getTotalCustomerCount();
     }
+
     public String updateProfile(User user) {
         if (user.getFullName().isEmpty() || user.getPhone().isEmpty() || user.getAddress().isEmpty()) {
             return "Fields cannot be empty!";
