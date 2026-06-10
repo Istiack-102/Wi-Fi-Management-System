@@ -62,7 +62,6 @@ public class PlanPanel extends JPanel {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setGridColor(new Color(230, 230, 230));
 
-        // --- হেডার ডিজাইন ---
         JTableHeader header = table.getTableHeader();
         header.setPreferredSize(new Dimension(100, 45));
         header.setBackground(Color.BLACK);
@@ -70,7 +69,6 @@ public class PlanPanel extends JPanel {
         header.setFont(new Font("Segoe UI", Font.BOLD, 16));
         header.setReorderingAllowed(false);
 
-        // রেন্ডারার এবং এডিটর সেট করা
         table.getColumnModel().getColumn(4).setCellRenderer(new ButtonRenderer());
         table.getColumnModel().getColumn(4).setCellEditor(new ButtonEditor(new JCheckBox(), table, userService, user, parent));
 
@@ -86,7 +84,6 @@ public class PlanPanel extends JPanel {
         add(lblFooter, BorderLayout.SOUTH);
     }
 
-    // --- বাটন দেখানোর জন্য রেন্ডারার ---
     class ButtonRenderer extends JButton implements TableCellRenderer {
         public ButtonRenderer() {
             setOpaque(true);
@@ -102,7 +99,6 @@ public class PlanPanel extends JPanel {
         }
     }
 
-    // --- বাটনে ক্লিক করলে অ্যাকশন হ্যান্ডেল করার জন্য এডিটর ---
     class ButtonEditor extends DefaultCellEditor {
         protected JButton button;
         private JTable table;
@@ -137,23 +133,19 @@ public class PlanPanel extends JPanel {
                 int planId = (int) table.getValueAt(row, 0);
                 String planName = table.getValueAt(row, 1).toString();
 
-                // প্রাইস স্ট্রিং থেকে নম্বর বের করা (e.g., "500.0 BDT" -> 500.0)
                 String priceText = table.getValueAt(row, 3).toString().replace(" BDT", "");
                 double price = Double.parseDouble(priceText);
 
-                // ১. ভেরিফিকেশন চেক
                 if (!userService.isVerifiedCustomer(currentUser.getUserId())) {
                     JOptionPane.showMessageDialog(button,
                             "Your account is not verified! Please contact admin for MAC setup.",
                             "Verification Required", JOptionPane.WARNING_MESSAGE);
                 } else {
-                    // ২. কনফার্মেশন এবং পেমেন্ট প্যানেলে পাঠানো
                     int confirm = JOptionPane.showConfirmDialog(button,
                             "Selected Plan: " + planName + "\nPrice: " + price + " BDT\n\nDo you want to proceed to payment?",
                             "Confirm Plan Selection", JOptionPane.YES_NO_OPTION);
 
                     if (confirm == JOptionPane.YES_OPTION) {
-                        // ড্যাশবোর্ডের মাধ্যমে পেমেন্ট প্যানেল লোড করা
                         dashboard.loadPaymentPanel(planId, price);
                     }
                 }

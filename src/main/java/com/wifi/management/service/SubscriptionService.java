@@ -9,9 +9,6 @@ import java.time.temporal.ChronoUnit;
 
 public class SubscriptionService {
 
-    // =====================================================================
-    // 🛑 নতুন লজিক: চলতি মাসে অলরেডি ইউজার কোনো প্ল্যান কিনেছে কি না তা চেক করা
-    // =====================================================================
     public boolean hasUserPurchasedThisMonth(int userId) {
         String sql = """
                 SELECT COUNT(*) 
@@ -160,7 +157,6 @@ public class SubscriptionService {
         return "N/A";
     }
 
-    // ================= 8. GET EXPIRY DATE (Null Safe করা হয়েছে) =================
     public String getExpiryDate(int userId) {
         String sql = """
                 SELECT expiry_date

@@ -13,7 +13,7 @@ public class Card_Checker {
     public static boolean isValidCard(String cardNumber) {
         if (cardNumber == null) return false;
         cardNumber = cardNumber.replaceAll("[\\s-]", "");
-        if (!cardNumber.matches("\\d{13,19}")) return false; // সাধারণত ১৩-১৯ ডিজিট হয়
+        if (!cardNumber.matches("\\d{13,19}")) return false;
         return luhnCheck(cardNumber);
     }
     public static boolean isValidExpiryDate(String expiryDate) {

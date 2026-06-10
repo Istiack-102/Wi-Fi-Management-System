@@ -14,7 +14,7 @@ import java.util.Date;
 public class PDFGeneratorService {
 
     public static String generatePaymentReceipt(User user, String transactionId, String planName, double amount, String method) {
-        // ইউজারের Downloads ফোল্ডারে সেভ করার পাথ তৈরি
+
         String userHome = System.getProperty("user.home");
         String fileName = "WiFi_Payment_Receipt_" + transactionId + ".pdf";
         String pdfOutputPath = userHome + File.separator + "Downloads" + File.separator + fileName;
@@ -26,14 +26,12 @@ public class PDFGeneratorService {
             PdfWriter.getInstance(document, new FileOutputStream(pdfOutputPath));
             document.open();
 
-            // ফন্ট এবং কালার প্যালেট সেটআপ
             Font titleFont = new Font(Font.FontFamily.HELVETICA, 22, Font.BOLD, new BaseColor(52, 152, 219));
             Font subTitleFont = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD, new BaseColor(46, 204, 113));
             Font labelFont = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD, BaseColor.GRAY);
             Font valueFont = new Font(Font.FontFamily.HELVETICA, 11, Font.NORMAL, new BaseColor(44, 62, 80));
             Font headerFont = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD, BaseColor.WHITE);
 
-            // ১. হেডার ব্র্যান্ডিং অংশ
             PdfPTable headerTable = new PdfPTable(2);
             headerTable.setWidthPercentage(100);
 
@@ -49,7 +47,6 @@ public class PDFGeneratorService {
             document.add(headerTable);
             document.add(new Paragraph("\n"));
 
-            // ২. কাস্টমার এবং ট্রানজেকশন মেটা ডাটা
             PdfPTable metaTable = new PdfPTable(4);
             metaTable.setWidthPercentage(100);
             metaTable.setWidths(new float[]{1.3f, 2f, 1.5f, 1.5f});
@@ -72,7 +69,6 @@ public class PDFGeneratorService {
             document.add(metaTable);
             document.add(new Paragraph("\n\n"));
 
-            // ৩. মেইন বিলিং আইটেম টেবিল
             PdfPTable detailsTable = new PdfPTable(2);
             detailsTable.setWidthPercentage(100);
             detailsTable.setWidths(new float[]{4f, 1.5f});
@@ -106,7 +102,6 @@ public class PDFGeneratorService {
 
             document.add(detailsTable);
 
-            // ৪. প্রফেশনাল ফুটার নোট
             Paragraph footer = new Paragraph("\n\n\n\nThank you for choosing WiFi Manager.\nThis is an electronically generated document, no signature required.", labelFont);
             footer.setAlignment(Element.ALIGN_CENTER);
             document.add(footer);

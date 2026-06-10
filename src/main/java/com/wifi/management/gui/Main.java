@@ -8,15 +8,12 @@ public class Main {
     public static void main(String[] args) {
 
         try {
-            // 🌟 Built-in modern look (NO external library)
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-
-            // 🎨 Global UI improvements (modern feel)
             UIManager.put("control", new Color(245, 245, 245));
             UIManager.put("info", new Color(242, 242, 242));
 

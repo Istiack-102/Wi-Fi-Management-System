@@ -7,7 +7,6 @@ public class Plan {
     private int speedLimitMbps;
     private double monthlyPrice;
 
-    // Constructor
     public Plan(int planId, String planName, int speedLimitMbps, double monthlyPrice) {
         this.planId = planId;
         this.planName = planName;
@@ -15,10 +14,8 @@ public class Plan {
         this.monthlyPrice = monthlyPrice;
     }
 
-    // Default Constructor
     public Plan() {}
 
-    // Getters
     public int getPlanId() {
         return planId;
     }
@@ -35,7 +32,6 @@ public class Plan {
         return monthlyPrice;
     }
 
-    // Setters
     public void setPlanId(int planId) {
         this.planId = planId;
     }

@@ -10,7 +10,6 @@ public class CustomerPanel extends JPanel {
     private User currentUser;
     private UserService userService;
 
-    // মূল প্রোফাইলের রিড-অনলি লেবেলগুলো (যাতে পপ-আপ থেকে ডাটা আপডেট হলে এগুলো রিফ্রেশ করা যায়)
     private JLabel lblFullNameValue;
     private JLabel lblPhoneValue;
     private JLabel lblAddressValue;
@@ -26,7 +25,6 @@ public class CustomerPanel extends JPanel {
         setBackground(new Color(241, 242, 246));
         setBorder(BorderFactory.createEmptyBorder(40, 60, 40, 60));
 
-        // --- 1. Top Section: Profile Icon ---
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
         headerPanel.setOpaque(false);
@@ -44,7 +42,6 @@ public class CustomerPanel extends JPanel {
         headerPanel.add(lblUsername);
         add(headerPanel, BorderLayout.NORTH);
 
-        // --- 2. Information Form (Labels Only) ---
         JPanel infoCard = new JPanel(new GridBagLayout());
         infoCard.setBackground(Color.WHITE);
         infoCard.setBorder(BorderFactory.createCompoundBorder(
@@ -56,7 +53,6 @@ public class CustomerPanel extends JPanel {
         gbc.insets = new Insets(15, 10, 15, 10);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // ভ্যালু লেবেলগুলো ইউজারের ডাটা দিয়ে ইনিশিয়ালাইজ করা
         lblFullNameValue = new JLabel(currentUser.getFullName() != null ? currentUser.getFullName() : "N/A");
         lblPhoneValue = new JLabel(currentUser.getPhone() != null ? currentUser.getPhone() : "N/A");
         lblAddressValue = new JLabel(currentUser.getAddress() != null ? currentUser.getAddress() : "N/A");
@@ -64,19 +60,16 @@ public class CustomerPanel extends JPanel {
         String roleStr = (currentUser.getRoleId() == 2) ? "Customer" : "Admin";
         JLabel lblRoleValue = new JLabel(roleStr);
 
-        // ফন্ট সেটআপ
         Font valueFont = new Font("Arial", Font.PLAIN, 14);
         lblFullNameValue.setFont(valueFont);
         lblPhoneValue.setFont(valueFont);
         lblAddressValue.setFont(valueFont);
         lblRoleValue.setFont(new Font("Arial", Font.ITALIC, 14));
 
-        // রো যোগ করা (Helper Method ব্যবহার করে)
         addInfoRow(infoCard, "Full Name:", lblFullNameValue, 0, gbc);
         addInfoRow(infoCard, "Phone Number:", lblPhoneValue, 1, gbc);
         addInfoRow(infoCard, "Home Address:", lblAddressValue, 2, gbc);
 
-        // Account Type Row
         gbc.gridy = 3; gbc.gridx = 0;
         JLabel lblRoleKey = new JLabel("Account Type:");
         lblRoleKey.setFont(new Font("Arial", Font.BOLD, 14));
@@ -86,7 +79,6 @@ public class CustomerPanel extends JPanel {
 
         add(infoCard, BorderLayout.CENTER);
 
-        // --- 3. Bottom Actions: Pop-up Open Button ---
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         actionPanel.setOpaque(false);
 
@@ -100,7 +92,6 @@ public class CustomerPanel extends JPanel {
         actionPanel.add(btnEdit);
         add(actionPanel, BorderLayout.SOUTH);
 
-        // ================= ACTION TO OPEN DIALOG =================
         btnEdit.addActionListener(e -> {
             openUpdateDialog();
         });
@@ -120,23 +111,19 @@ public class CustomerPanel extends JPanel {
         panel.add(valueLabel, gbc);
     }
 
-    // ================= SEPARATE UPDATE POP-UP WINDOW =================
     private void openUpdateDialog() {
-        // মেইন প্যারেন্ট ফ্রেম ট্র্যাক করা যাতে ফোকাস লক থাকে (Modal Type)
         Window parentWindow = SwingUtilities.getWindowAncestor(this);
         JDialog updateDialog = new JDialog(parentWindow, "Update Profile Information", Dialog.ModalityType.APPLICATION_MODAL);
         updateDialog.setSize(420, 350);
         updateDialog.setLocationRelativeTo(this);
         updateDialog.setLayout(new BorderLayout(10, 10));
 
-        // পপ-আপ ফর্ম প্যানেল
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
         GridBagConstraints dialogGbc = new GridBagConstraints();
         dialogGbc.insets = new Insets(12, 5, 12, 5);
         dialogGbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // এডিটেবল টেক্সট ফিল্ডসমূহ তৈরি ও বর্তমান ডাটা ইনসার্ট করা
         JTextField txtFullName = new JTextField(currentUser.getFullName(), 20);
         JTextField txtPhone = new JTextField(currentUser.getPhone(), 20);
         JTextField txtAddress = new JTextField(currentUser.getAddress(), 20);
@@ -146,7 +133,6 @@ public class CustomerPanel extends JPanel {
         txtPhone.setFont(fieldFont);
         txtAddress.setFont(fieldFont);
 
-        // গ্রিডে সাজানো
         dialogGbc.gridy = 0; dialogGbc.gridx = 0; dialogGbc.weightx = 0.3;
         formPanel.add(new JLabel("Full Name:"), dialogGbc);
         dialogGbc.gridx = 1; dialogGbc.weightx = 0.7;
@@ -164,7 +150,6 @@ public class CustomerPanel extends JPanel {
 
         updateDialog.add(formPanel, BorderLayout.CENTER);
 
-        // সেভ চেঞ্জেস বাটন
         JButton btnSave = new JButton("Save Changes");
         btnSave.setBackground(new Color(46, 204, 113)); // গ্রিন কালার
         btnSave.setForeground(Color.WHITE);
@@ -182,23 +167,20 @@ public class CustomerPanel extends JPanel {
                 return;
             }
 
-            // লোকাল মডেল ডেটা পরিবর্তন
             currentUser.setFullName(newName);
             currentUser.setPhone(newPhone);
             currentUser.setAddress(newAddress);
 
-            // UserService কল করে ডাটাবেস আপডেট
             String response = userService.updateProfile(currentUser);
 
             if (response.equals("Success")) {
                 JOptionPane.showMessageDialog(updateDialog, "Profile Updated Successfully! ✅");
 
-                // প্রধান প্যানেলের লেবেলগুলোতে ইনস্ট্যান্ট নতুন টেক্সট পুশ (UI Sync)
                 lblFullNameValue.setText(newName);
                 lblPhoneValue.setText(newPhone);
                 lblAddressValue.setText(newAddress);
 
-                updateDialog.dispose(); // পপ-আপ বন্ধ
+                updateDialog.dispose();
             } else {
                 JOptionPane.showMessageDialog(updateDialog, "Failed to update profile: " + response, "Error", JOptionPane.ERROR_MESSAGE);
             }

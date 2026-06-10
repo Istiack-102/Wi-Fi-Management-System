@@ -8,7 +8,6 @@ public class Usage {
     private Timestamp timeUsed; // ডাটাবেসের TIMESTAMP এর সাথে মিল রেখে
     private int userId;
 
-    // Constructor
     public Usage(int usageId, double dataAmount, Timestamp timeUsed, int userId) {
         this.usageId = usageId;
         this.dataAmount = dataAmount;
@@ -16,16 +15,13 @@ public class Usage {
         this.userId = userId;
     }
 
-    // Default Constructor
     public Usage() {}
 
-    // Getters
     public int getUsageId() { return usageId; }
     public double getDataAmount() { return dataAmount; }
     public Timestamp getTimeUsed() { return timeUsed; }
     public int getUserId() { return userId; }
 
-    // Setters
     public void setUsageId(int usageId) { this.usageId = usageId; }
     public void setDataAmount(double dataAmount) { this.dataAmount = dataAmount; }
     public void setTimeUsed(Timestamp timeUsed) { this.timeUsed = timeUsed; }

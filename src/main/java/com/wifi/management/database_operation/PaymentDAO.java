@@ -16,9 +16,6 @@ public class PaymentDAO {
         try {
             conn.setAutoCommit(false);
 
-            // =====================================================================
-            // 🛑 নতুন লজিক: চলতি মাসে অলরেডি কোনো প্ল্যান কেনা হয়েছে কি না তা চেক করা
-            // =====================================================================
             String checkSQL = "SELECT COUNT(*) FROM transactions " +
                     "WHERE user_id = ? " +
                     "AND MONTH(payment_date) = MONTH(CURRENT_DATE()) " +
@@ -34,9 +31,6 @@ public class PaymentDAO {
                 }
             }
 
-            // =====================================================================
-            // ১. পেমেন্ট ট্রানজেকশন ইনসার্ট করা
-            // =====================================================================
             String insertPaymentSQL = "INSERT INTO transactions (transaction_id, user_id, amount, payment_method) VALUES (?, ?, ?, ?)";
             try (PreparedStatement pstmtPayment = conn.prepareStatement(insertPaymentSQL)) {
                 pstmtPayment.setString(1, payment.getTransactionId());
@@ -46,9 +40,7 @@ public class PaymentDAO {
                 pstmtPayment.executeUpdate();
             }
 
-            // =====================================================================
-            // ২. সাবস্ক্রিপশন টেবিল আপগ্রেড/ইনসার্ট (Upsert) করা
-            // =====================================================================
+
             String upsertSubscriptionSQL = "INSERT INTO subscriptions (user_id, plan_id, expiry_date, status) " +
                     "VALUES (?, ?, DATE_ADD(CURDATE(), INTERVAL 30 DAY), 'active') " +
                     "ON DUPLICATE KEY UPDATE " +
@@ -66,19 +58,16 @@ public class PaymentDAO {
                 }
             }
 
-            // সব কোয়েরি সফল হলে ডেটাবেসে পার্মানেন্টলি সেভ হবে
             conn.commit();
             return true;
 
         } catch (SQLException e) {
-            // কোনো একটি কোয়েরি ফেইল করলে বা লিমিট এক্সিড হলে পুরো প্রসেস রোলব্যাক হবে
             try {
                 if (conn != null) conn.rollback();
             } catch (SQLException rollbackEx) {
                 rollbackEx.printStackTrace();
             }
 
-            // যদি আমাদের কাস্টম লিমিট এরর হয়, তবে মেসেজটি প্রিন্ট করবে
             if (e.getMessage().contains("LIMIT_EXCEEDED")) {
                 System.err.println("❌ Purchase Blocked: " + e.getMessage());
             } else {

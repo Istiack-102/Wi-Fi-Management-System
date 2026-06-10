@@ -8,9 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConnectionRequestDAO {
-
     public boolean insertRequest(int userId, int planId) {
-
         String sql = "INSERT INTO connection_requests (user_id, plan_id) VALUES (?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
@@ -99,8 +97,6 @@ public class ConnectionRequestDAO {
     }
     public boolean approveRequestWithMac(int requestId, String macAddress) {
         String sqlUpdateReq = "UPDATE connection_requests SET status = 'accepted', mac_address = ? WHERE request_id = ?";
-
-        // ২. customer_details টেবিলে MAC আপডেট (রিকোয়েস্ট আইডির মাধ্যমে ইউজার খুঁজে)
         String sqlUpdateCustomer = "UPDATE customer_details SET mac_address = ? " +
                 "WHERE user_id = (SELECT user_id FROM connection_requests WHERE request_id = ?)";
 

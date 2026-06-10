@@ -10,7 +10,6 @@ public class Payment {
     private Timestamp paymentDate;
     private String paymentMethod;
 
-    // Constructor
     public Payment(String transactionId, int userId, double amount, Timestamp paymentDate, String paymentMethod) {
         this.transactionId = transactionId;
         this.userId = userId;
@@ -19,10 +18,8 @@ public class Payment {
         this.paymentMethod = paymentMethod;
     }
 
-    // Default Constructor
     public Payment() {}
 
-    // Getters
     public String getTransactionId() {
         return transactionId;
     }
@@ -43,7 +40,6 @@ public class Payment {
         return paymentMethod;
     }
 
-    // Setters
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
     }

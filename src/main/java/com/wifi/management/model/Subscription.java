@@ -10,7 +10,6 @@ public class Subscription {
     private Date expiryDate;
     private String status;
 
-    // Constructor
     public Subscription(int subId, int userId, int planId, Date expiryDate, String status) {
         this.subId = subId;
         this.userId = userId;
@@ -19,10 +18,8 @@ public class Subscription {
         this.status = status;
     }
 
-    // Default Constructor
     public Subscription() {}
 
-    // Getters
     public int getSubId() {
         return subId;
     }
@@ -43,7 +40,6 @@ public class Subscription {
         return status;
     }
 
-    // Setters
     public void setSubId(int subId) {
         this.subId = subId;
     }

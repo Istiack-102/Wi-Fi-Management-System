@@ -32,7 +32,6 @@ public class PaymentService {
         double amount = selectedPlan.getMonthlyPrice();
 
         if ("Card".equalsIgnoreCase(method)) {
-            // কার্ডের বিস্তারিত তথ্য (Number, Expiry, CVC) চেক করা
             if (!Card_Checker.isFullCardValid(cardNum, expiryDate, cvc)) {
                 return "Invalid Card Details! Please check Card Number, Expiry (MM/YY), and CVC.";
             }

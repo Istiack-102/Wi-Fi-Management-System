@@ -38,7 +38,6 @@ public class UserService {
         return success ? "Registration Successful" : "Username already exists or DB error";
     }
 
-    // 🔥 নতুন যুক্ত করা হলো: AdminDashboard-এর এরর দূর করার জন্য সরাসরি ম্যাপিং মেথড
     public User searchUserById(int userId) {
         return userDAO.searchUserById(userId);
     }

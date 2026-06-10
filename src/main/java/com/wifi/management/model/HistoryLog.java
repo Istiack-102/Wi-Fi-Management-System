@@ -11,7 +11,6 @@ public class HistoryLog {
     private String newValue;
     private Timestamp changedAt;
 
-    // Constructor
     public HistoryLog(int logId, int userId, String username, String fieldName, String oldValue, String newValue, Timestamp changedAt) {
         this.logId = logId;
         this.userId = userId;
@@ -22,7 +21,6 @@ public class HistoryLog {
         this.changedAt = changedAt;
     }
 
-    // Getters and Setters
     public int getLogId() {
         return logId;
     }

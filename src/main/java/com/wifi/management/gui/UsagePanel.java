@@ -18,7 +18,6 @@ public class UsagePanel extends JPanel {
         setBackground(new Color(241, 242, 246));
         setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
-        // --- 1. Header ---
         JPanel header = new JPanel(new GridLayout(2, 1));
         header.setOpaque(false);
 
@@ -33,11 +32,9 @@ public class UsagePanel extends JPanel {
         header.add(lblSubtitle);
         add(header, BorderLayout.NORTH);
 
-        // --- 2. Usage Cards Container ---
         JPanel cardsContainer = new JPanel(new GridLayout(1, 2, 20, 0));
         cardsContainer.setOpaque(false);
 
-        // Card 1: Data Consumed Progress
         JPanel progressCard = createCard("Monthly Limit Usage");
         JProgressBar usageBar = new JProgressBar(0, 100);
         usageBar.setValue(65); // Example data: 65% used
@@ -54,7 +51,6 @@ public class UsagePanel extends JPanel {
         progressCard.add(Box.createVerticalStrut(10));
         progressCard.add(lblDetail);
 
-        // Card 2: Speed/Session Info
         JPanel infoCard = createCard("Connection Stats");
         infoCard.add(new JLabel("Current Speed: 20 Mbps"));
         infoCard.add(new JLabel("Active Devices: 3"));

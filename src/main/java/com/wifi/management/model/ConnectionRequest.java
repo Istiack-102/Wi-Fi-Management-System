@@ -5,9 +5,9 @@ public class ConnectionRequest {
     private int requestId;
     private int userId;
     private int planId;
-    private String status; // pending / accepted / rejected
+    private String status;
 
-    // ================= CONSTRUCTORS =================
+
 
     public ConnectionRequest() {
     }
@@ -25,7 +25,7 @@ public class ConnectionRequest {
         this.status = status;
     }
 
-    // ================= GETTERS =================
+
 
     public int getRequestId() {
         return requestId;
@@ -43,7 +43,7 @@ public class ConnectionRequest {
         return status;
     }
 
-    // ================= SETTERS =================
+
 
     public void setRequestId(int requestId) {
         this.requestId = requestId;
@@ -61,7 +61,6 @@ public class ConnectionRequest {
         this.status = status;
     }
 
-    // ================= TO STRING (DEBUG PURPOSE) =================
 
     @Override
     public String toString() {

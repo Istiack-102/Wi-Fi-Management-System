@@ -41,7 +41,6 @@ public class UserDashboard extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // ================= SIDEBAR =================
         JPanel sidebar = new JPanel();
         sidebar.setBackground(new Color(44, 62, 80));
         sidebar.setPreferredSize(new Dimension(250, 750));
@@ -75,7 +74,6 @@ public class UserDashboard extends JFrame {
 
         add(sidebar, BorderLayout.WEST);
 
-        // ================= HEADER =================
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(Color.WHITE);
         header.setPreferredSize(new Dimension(900, 85));
@@ -101,7 +99,6 @@ public class UserDashboard extends JFrame {
 
         add(header, BorderLayout.NORTH);
 
-        // ================= CONTENT PANEL =================
         contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBackground(new Color(241, 242, 246));
         add(contentPanel, BorderLayout.CENTER);
@@ -111,16 +108,13 @@ public class UserDashboard extends JFrame {
         lblRequestStatus = new JLabel("Request Status: Not Requested");
         lblRequestStatus.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
-        // ================= ACTIONS & EVENT LISTENERS =================
         btnProfile.addActionListener(e -> showPanel(new CustomerPanel(currentUser)));
 
-        // 🔥 আপডেট: ইউজার এখন কোনো বাধা ছাড়াই সব ইন্টারনেট প্ল্যান দেখতে পারবেন
         btnPlans.addActionListener(e -> {
             showPanel(new PlanPanel(this, currentUser));
         });
 
         btnPayment.addActionListener(e -> {
-            // 🛑 প্রোটেকশন: সরাসরি ম্যানুয়াল পেমেন্ট ট্যাবে যেতে চাইলে ব্লক করবে
             if (subscriptionService.hasUserPurchasedThisMonth(currentUser.getUserId())) {
                 showMonthlyLimitWarning();
                 return;
@@ -168,7 +162,6 @@ public class UserDashboard extends JFrame {
         displaySubscriptionStatus(this.currentUser);
     }
 
-    // 🛑 ১ মাসে ১টি মাত্র প্ল্যান কেনার ওয়ার্নিং পপ-আপ মেসেজ
     private void showMonthlyLimitWarning() {
         JOptionPane.showMessageDialog(this,
                 "🛑 Access Denied!\n" +
@@ -185,7 +178,6 @@ public class UserDashboard extends JFrame {
         contentPanel.revalidate();
     }
 
-    // 🔥 ইন্টারনেট প্ল্যান প্যানেলের "Buy" বাটনে ক্লিক করলে এই মেথডটি কল হয়
     public void loadPaymentPanel(int planId, double amount) {
         // 🛑 সিকিউরিটি চেক: প্ল্যান দেখার পর "Buy" বাটনে ক্লিক করলেই এখানে Access Denied দেখাবে
         if (subscriptionService.hasUserPurchasedThisMonth(currentUser.getUserId())) {

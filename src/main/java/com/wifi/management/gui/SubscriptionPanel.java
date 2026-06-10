@@ -11,13 +11,11 @@ public class SubscriptionPanel extends JPanel {
         setBackground(new Color(241, 242, 246));
         setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
 
-        // --- Title Section ---
         JLabel lblTitle = new JLabel("Your Subscription Details");
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 26));
         lblTitle.setForeground(new Color(44, 62, 80));
         add(lblTitle, BorderLayout.NORTH);
 
-        // --- Info Card Section ---
         JPanel card = new JPanel(new GridLayout(5, 2, 10, 20));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
@@ -25,18 +23,14 @@ public class SubscriptionPanel extends JPanel {
                 BorderFactory.createEmptyBorder(30, 30, 30, 30)
         ));
 
-        // Helper to add data rows
-        // SubscriptionPanel-এর ভেতর কার্ড সেকশনটি এভাবে আপডেট করুন:
         addDataRow(card, "Current Plan:", user.getPlanName() != null ? user.getPlanName() : "No Active Plan");
 
-// ডাตาবেস থেকে স্পিড এবং প্রাইস দেখানো হচ্ছে
         addDataRow(card, "Internet Speed:", user.getPlanName() != null ? user.getSpeed() + " Mbps" : "N/A");
 
         addDataRow(card, "Monthly Bill:", user.getPlanName() != null ? "Tk. " + user.getPrice() : "N/A");
 
         addDataRow(card, "Expiry Date:", user.getExpiryDate() != null ? user.getExpiryDate().toString() : "N/A");
 
-        // Status Logic
         String statusText = "Inactive";
         Color statusColor = Color.RED;
         if (user.getExpiryDate() != null) {

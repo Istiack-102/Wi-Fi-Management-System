@@ -255,23 +255,17 @@ public class AdminDashboard extends JFrame {
             return;
         }
 
-        // =====================================================================
-        // নতুন ডিজাইন: ভার্টিক্যাল প্রোফাইল টেবিল ভিউ (Vertical Table View)
-        // =====================================================================
         JPanel profileViewPanel = new JPanel(new BorderLayout(20, 20));
         profileViewPanel.setBackground(new Color(245, 246, 250));
         profileViewPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
 
-        // হেডার টাইটেল
         JLabel lblProfileTitle = new JLabel("👤 Customer Profile Specification");
         lblProfileTitle.setFont(new Font("Segoe UI", Font.BOLD, 22));
         lblProfileTitle.setForeground(new Color(44, 62, 80));
         profileViewPanel.add(lblProfileTitle, BorderLayout.NORTH);
 
-        // টেবিলের কলাম নেম (লুকানোর জন্য কাস্টমাইজ করা হবে)
         String[] columns = {"Field/Property", "Registered Information"};
 
-        // এক্সপায়ারি ডেট টেক্সট তৈরি
         String expiryText = "N/A";
         if (u.getExpiryDate() != null) {
             expiryText = u.getExpiryDate().toString();
@@ -282,7 +276,6 @@ public class AdminDashboard extends JFrame {
             }
         }
 
-        // রো ভিত্তিক ডাটা ম্যাপিং (১ম রো আইডি, ২য় রো ইউজারনেম...)
         Object[][] data = {
                 {"User Database ID", "# " + u.getUserId()},
                 {"Account Username", u.getUsername() != null ? u.getUsername() : "N/A"},
@@ -294,7 +287,6 @@ public class AdminDashboard extends JFrame {
                 {"Subscription Expiry Date", expiryText}
         };
 
-        // টেবিল মডেল তৈরি (যাতে এডমিন ডাবল ক্লিক করে এডিট করতে না পারে)
         DefaultTableModel tableModel = new DefaultTableModel(data, columns) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
@@ -302,9 +294,6 @@ public class AdminDashboard extends JFrame {
 
         JTable profileTable = new JTable(tableModel);
 
-        // =====================================================================
-        // টেবিল স্টাইলিং (প্রফেশনাল লুক দেওয়ার জন্য)
-        // =====================================================================
         profileTable.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         profileTable.setRowHeight(45); // প্রতিটি রো বেশ বড় এবং ক্লিয়ার দেখাবে
         profileTable.setShowGrid(true);
@@ -312,27 +301,22 @@ public class AdminDashboard extends JFrame {
         profileTable.setSelectionBackground(new Color(236, 240, 241));
         profileTable.setSelectionForeground(Color.BLACK);
 
-        // কাস্টম সেল রেন্ডারার (বাম কলাম বোল্ড এবং ডান কলাম কালারফুল করার জন্য)
         profileTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-                // লেখার প্যাডিং ঠিক করা
                 setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 15));
 
                 if (column == 0) {
-                    // বাম পাশের কলাম: বোল্ড এবং গ্রে কালার (Properties)
                     c.setFont(new Font("Segoe UI", Font.BOLD, 15));
                     c.setForeground(new Color(127, 140, 141));
                     setHorizontalAlignment(JLabel.LEFT);
                 } else {
-                    // ডান পাশের কলাম: রেগুলার এবং ডার্ক কালার (Values)
                     c.setFont(new Font("Segoe UI", Font.PLAIN, 15));
                     c.setForeground(new Color(44, 62, 80));
                     setHorizontalAlignment(JLabel.LEFT);
 
-                    // নির্দিষ্ট কিছু ভ্যালুর জন্য কাস্টম কালার হাইলাইট
                     String valStr = value.toString();
                     if (valStr.contains("Active ✅")) {
                         c.setForeground(new Color(46, 204, 113)); // সবুজ
@@ -350,11 +334,9 @@ public class AdminDashboard extends JFrame {
             }
         });
 
-        // টেবিলের কলামের সাইজ ফিক্সড করা
         profileTable.getColumnModel().getColumn(0).setPreferredWidth(250);
         profileTable.getColumnModel().getColumn(1).setPreferredWidth(600);
 
-        // টেবিল হেডার কাস্টমাইজেশন
         JTableHeader header = profileTable.getTableHeader();
         header.setBackground(SIDEBAR_COLOR);
         header.setForeground(Color.WHITE);
@@ -367,7 +349,6 @@ public class AdminDashboard extends JFrame {
 
         profileViewPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // ব্যাক বাটন সেকশন
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         bottomPanel.setOpaque(false);
         JButton btnBack = new JButton("⬅️ Back to Directory");
@@ -382,7 +363,6 @@ public class AdminDashboard extends JFrame {
 
         profileViewPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-        // মেইন কন্টেন্ট রিফ্রেশ
         mainContent.removeAll();
         mainContent.add(profileViewPanel, BorderLayout.CENTER);
         mainContent.revalidate();
@@ -516,6 +496,6 @@ public class AdminDashboard extends JFrame {
         btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
         btn.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
-        return btn; // 🔥 ফিক্সড: সিনট্যাক্স স্পেস টাইপো ঠিক করা হয়েছে
+        return btn;
     }
 }

@@ -24,7 +24,6 @@ public class RegisterFrame extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // --- Header ---
         JPanel header = new JPanel();
         header.setBackground(new Color(52, 152, 219));
         JLabel lblTitle = new JLabel("New User Registration");
@@ -33,7 +32,6 @@ public class RegisterFrame extends JFrame {
         header.add(lblTitle);
         add(header, BorderLayout.NORTH);
 
-        // --- Form Body ---
         JPanel form = new JPanel(new GridLayout(6, 2, 10, 20));
         form.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
 
@@ -59,7 +57,6 @@ public class RegisterFrame extends JFrame {
 
         add(form, BorderLayout.CENTER);
 
-        // --- Footer Buttons ---
         JPanel footer = new JPanel();
         btnRegister = new JButton("Register Now");
         btnRegister.setBackground(new Color(46, 204, 113));
@@ -71,7 +68,6 @@ public class RegisterFrame extends JFrame {
         footer.add(btnBack);
         add(footer, BorderLayout.SOUTH);
 
-        // --- Logic ---
         btnRegister.addActionListener(e -> handleRegistration());
         btnBack.addActionListener(e -> {
             this.dispose();
@@ -87,23 +83,19 @@ public class RegisterFrame extends JFrame {
         String username = txtUsername.getText().trim();
         String password = new String(txtPassword.getPassword());
 
-        // Basic Empty Check - এখানে fullName ও চেক করা উচিত
         if (username.isEmpty() || password.isEmpty() || phone.isEmpty() || fullName.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill in all mandatory fields including Full Name!");
             return;
         }
 
-        // 2. Create Model Object
         User newUser = new User();
         newUser.setUsername(username);
-        newUser.setFullName(fullName); // 🔥 এই লাইনটি মিসিং ছিল, এটি যোগ করা হয়েছে
+        newUser.setFullName(fullName);
         newUser.setPhone(phone);
         newUser.setAddress(address);
 
-        // Default role for new signups is 'Customer' (ID: 2)
         newUser.setRoleId(2);
 
-        // 3. Call Service Layer
         String result = userService.registerNewCustomer(newUser, password);
 
         if (result.equals("Registration Successful")) {

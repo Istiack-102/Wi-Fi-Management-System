@@ -20,7 +20,6 @@ public class PaymentPanel extends JPanel {
     private PaymentService paymentService;
     private double amountToPay;
 
-    // GUI Components
     private JTextField txtCardNumber;
     private JTextField txtExpiry;
     private JTextField txtCVC;
@@ -72,13 +71,11 @@ public class PaymentPanel extends JPanel {
         gbc.insets = new Insets(8, 10, 8, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Title
         JLabel lblTitle = new JLabel("💳 Secure Payment Gateway", SwingConstants.CENTER);
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 26));
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         add(lblTitle, gbc);
 
-        // ১. Select Plan Chart
         gbc.gridwidth = 1; gbc.gridy = 1; gbc.gridx = 0;
         add(new JLabel("Select Plan Chart:"), gbc);
 
@@ -96,7 +93,6 @@ public class PaymentPanel extends JPanel {
             }
         });
 
-        // ২. Payable Amount
         gbc.gridy = 2; gbc.gridx = 0;
         add(new JLabel("Payable Amount:"), gbc);
         txtAmount = new JTextField(15);
@@ -106,7 +102,6 @@ public class PaymentPanel extends JPanel {
         gbc.gridx = 1;
         add(txtAmount, gbc);
 
-        // ৩. Payment Method
         gbc.gridx = 0; gbc.gridy = 3;
         add(new JLabel("Method:"), gbc);
         comboMethod = new JComboBox<>(new String[]{"Card", "bKash", "Nagad"});
@@ -114,28 +109,24 @@ public class PaymentPanel extends JPanel {
         gbc.gridx = 1;
         add(comboMethod, gbc);
 
-        // ৪. Card Number
         gbc.gridx = 0; gbc.gridy = 4;
         add(new JLabel("Card/Account No:"), gbc);
         txtCardNumber = new JTextField(15);
         gbc.gridx = 1;
         add(txtCardNumber, gbc);
 
-        // ৫. Expiry Date
         gbc.gridx = 0; gbc.gridy = 5;
         add(new JLabel("Expiry (MM/YY):"), gbc);
         txtExpiry = new JTextField(15);
         gbc.gridx = 1;
         add(txtExpiry, gbc);
 
-        // ৬. CVC
         gbc.gridx = 0; gbc.gridy = 6;
         add(new JLabel("CVC:"), gbc);
         txtCVC = new JTextField(15);
         gbc.gridx = 1;
         add(txtCVC, gbc);
 
-        // ৭. Pay Button
         btnPay = new JButton("Confirm & Pay Now");
         btnPay.setBackground(new Color(46, 204, 113));
         btnPay.setForeground(Color.WHITE);
@@ -145,7 +136,6 @@ public class PaymentPanel extends JPanel {
         gbc.insets = new Insets(20, 10, 10, 10);
         add(btnPay, gbc);
 
-        // Footer
         JLabel lblNote = new JLabel("Your payment is encrypted and secure.", SwingConstants.CENTER);
         lblNote.setFont(new Font("Segoe UI", Font.ITALIC, 11));
         lblNote.setForeground(Color.GRAY);
@@ -226,7 +216,6 @@ public class PaymentPanel extends JPanel {
         if (response.startsWith("Payment Successful")) {
             JOptionPane.showMessageDialog(this, response, "Success", JOptionPane.INFORMATION_MESSAGE);
 
-            // ট্রানজেকশন আইডি মক করা
             String tempTxnId = "TXN" + (int)(Math.random() * 900000 + 100000);
             if (cardNum.length() >= 4) {
                 tempTxnId = "TXN" + cardNum.substring(cardNum.length() - 4) + (int)(Math.random() * 9000 + 1000);
@@ -234,7 +223,6 @@ public class PaymentPanel extends JPanel {
 
             final String transactionId = tempTxnId;
 
-            // 🔥 আপডেট: SwingWorker ব্যবহার করে ব্যাকগ্রাউন্ড থ্রেডে পিডিএফ তৈরি ও পপ-আপ কন্ট্রোল
             SwingWorker<String, Void> worker = new SwingWorker<>() {
                 @Override
                 protected String doInBackground() throws Exception {
@@ -273,12 +261,11 @@ public class PaymentPanel extends JPanel {
                         ex.printStackTrace();
                     }
 
-                    // ৪. প্রসেস শেষে ড্যাশবোর্ডে রিডাইরেক্ট (থ্রেড ফ্রেন্ডলি পজিশনে সরানো হয়েছে)
                     parent.showPanel(new SubscriptionPanel(currentUser));
                 }
             };
 
-            worker.execute(); // ব্যাকগ্রাউন্ড থ্রেড রান করা
+            worker.execute();
 
         } else {
             JOptionPane.showMessageDialog(this, response, "Payment Error", JOptionPane.ERROR_MESSAGE);

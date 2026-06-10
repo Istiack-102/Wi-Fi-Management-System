@@ -8,14 +8,13 @@ public class User {
     private String fullName;
     private String phone;
     private String address;
-    private int roleId; // ১ = Admin, ২ = Customer
+    private int roleId; //
     private String planName;
     private java.sql.Date expiryDate;
     private int speed;
     private double price;
-    private String macAddress; // নতুন যোগ করা হলো (Hardware MAC Address এর জন্য)
+    private String macAddress;
 
-    // ================= CONSTRUCTORS =================
     public User() {}
 
     public User(int userId, String username, String passwordHash, String fullName, String phone, String address, int roleId) {
@@ -28,7 +27,6 @@ public class User {
         this.roleId = roleId;
     }
 
-    // ================= GETTERS & SETTERS =================
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }
 
@@ -62,7 +60,6 @@ public class User {
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
 
-    // MAC Address এর জন্য নতুন মেথড
     public String getMacAddress() { return macAddress; }
     public void setMacAddress(String macAddress) { this.macAddress = macAddress; }
 }

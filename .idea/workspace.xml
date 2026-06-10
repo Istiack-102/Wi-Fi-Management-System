@@ -5,18 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6001344-6f99-458c-aef0-7e14e07b7d77" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/service/PDFGeneratorService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/database_schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/database_schema.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/ConnectionRequestDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/ConnectionRequestDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/PaymentDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/PaymentDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/UserDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/database_operation/UserDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/AdminDashboard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/AdminDashboard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/PaymentPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/PaymentPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/UserDashboard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/UserDashboard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/model/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/service/SubscriptionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/service/SubscriptionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wifi/management/gui/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
